@@ -107,15 +107,6 @@
           </div>
           <input type="text" class="form-control" id="txtEndpoint" placeholder="Endpunkt..." />
           <div class="input-group-btn">
-            <button type="button" class="btn btn-default dropdown-toggle" id="btnTemplates" data-toggle="dropdown">
-              <i class="fa fa-bars"></i>&nbsp;&nbsp;&nbsp;<span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right" id="listTemplates">
-              <li>
-                <a href="#" id="lnkRequestFormClean"><i class="fa fa-trash-o"></i> Eingabefelder leeren</a>
-              </li>
-              <li class="divider"></li>
-            </ul>
             <button type="submit" class="btn btn-primary" id="btnSend">
               <i class="fa" id="iconSend"></i> Absenden
             </button>
@@ -580,7 +571,6 @@
           $("#lblRestApiUrl").text(connectionSettings.url);
 
           $("#btnCredentials").removeAttr("disabled");
-          $("#btnTemplates").removeAttr("disabled");
           $("#btnSend").removeAttr("disabled");
 
           // Einstellungen speichern wenn vom Modal her kommend
@@ -767,187 +757,6 @@
       DELETE: '<i class="fa fa-times-circle text-danger"></i>',
     };
 
-    const REQUEST_TEMPLATES = [
-      {
-        header: true,
-        name: "Allgemein",
-        // desc: "",
-        // method: "",
-        // endpoint: "",
-        // httpbody: ""
-      },
-      {
-        header: false,
-        name: "Datenbanken abrufen",
-        desc: "ohne Login möglich",
-        method: "GET",
-        endpoint: "PRO/Datenbank?key=[RESTAPIPWD]",
-      },
-      {
-        header: false,
-        name: "Info abrufen",
-        desc: "ohne Login möglich",
-        method: "GET",
-        endpoint: "PRO/Info?key=[RESTAPIPWD]",
-      },
-      {
-        header: false,
-        name: "Login-Objekt abrufen",
-        method: "GET",
-        endpoint: "PRO/Login",
-      },
-      {
-        header: true,
-        name: "Zusatztabellen und Zusatzfelder",
-      },
-      {
-        header: false,
-        name: "Zusatztabellen abrufen",
-        desc: "Zusatztabellen werden über die Felddefinitionen abgerufen",
-        method: "GET",
-        endpoint: "PRO/Felddefinition?limit=10000&filter=Zusatztabelle==true",
-      },
-      {
-        header: false,
-        name: "Zusatzfelder für Tabelle abrufen",
-        desc: "Beispiel: Zusatzfelder der ADR_Adressen",
-        method: "GET",
-        endpoint: "PRO/Felddefinition/ADR_Adressen?filter=Zusatzfeld==true",
-      },
-      {
-        header: true,
-        name: "Einstellungen",
-      },
-      {
-        header: false,
-        name: "Einstellung einzeln abrufen",
-        desc: "Beispiel: pxZeit / StandortZwingend",
-        method: "GET",
-        endpoint: "PRO/Einstellung/pxZeit/StandortZwingend",
-      },
-      {
-        header: false,
-        name: "Einstellung unverändert abrufen",
-        desc: "Beispiel: pxZeit / StandortZwingend",
-        method: "GET",
-        endpoint: "PRO/Einstellung/pxZeit/StandortZwingend?plain=yes",
-      },
-      {
-        header: false,
-        name: "Einstellung eines Moduls abrufen",
-        desc: "Beispiel: pxZeit",
-        method: "GET",
-        endpoint: "PRO/Einstellung/pxZeit",
-      },
-      {
-        header: true,
-        name: "Beispiele (Adressverwaltung)",
-      },
-      {
-        header: false,
-        name: "Adresse einzeln abrufen",
-        desc: "Beispiel: Adressnummer 1",
-        method: "GET",
-        endpoint: "ADR/Adresse/1",
-      },
-      {
-        header: false,
-        name: "Adresse mehrere abrufen",
-        desc: "max. 1000 Adressen, 3 Stufen einbetten",
-        method: "GET",
-        endpoint: "ADR/Adresse?limit=1000&depth=3",
-      },
-      {
-        header: false,
-        name: "Adresse anlegen",
-        method: "POST",
-        endpoint: "ADR/Adresse",
-        httpbody: {
-          Name: "Testadresse REST API Debugger",
-          PLZ: "7323",
-          Ort: "Wangs",
-        },
-      },
-      {
-        header: false,
-        name: "Adresse überschreiben",
-        desc: "Adresse mit der Nummer 1234567890 wird überschrieben",
-        method: "PUT",
-        endpoint: "ADR/Adresse/1234567890",
-        httpbody: {
-          AdressNr: 1234567890,
-          Name: "Testadresse REST API Debugger",
-          PLZ: "7323",
-          Ort: "Wangs",
-        },
-      },
-      {
-        header: false,
-        name: "Adresse aktualisieren",
-        desc: "Adresse mit der Nummer 1234567890 wird aktualisiert",
-        method: "PATCH",
-        endpoint: "ADR/Adresse/1234567890",
-        httpbody: { PLZ: "8620", Ort: "Wetzikon" },
-      },
-      {
-        header: false,
-        name: "Adresse löschen",
-        desc: "Adresse mit der Nummer 1234567890 wird gelöscht",
-        method: "DELETE",
-        endpoint: "ADR/Adresse/1234567890",
-      },
-      {
-        header: true,
-        name: "Beispiele (Zeitverwaltung)",
-      },
-      {
-        header: false,
-        name: "Stundeninfo abrufen",
-        desc: "Stundeninfo für den eingeloggten Mitarbeiter",
-        method: "GET",
-        endpoint: "ZEI/Stundeninfo",
-      },
-      {
-        header: false,
-        name: "Stundeninfo für anderen Mitarbeiter abrufen",
-        desc: "Stundeninfo für den Mitarbeiter mit der Mitarbeiternummer 3",
-        method: "GET",
-        endpoint: "ZEI/Stundeninfo?mitarbeiter=3",
-      },
-      {
-        header: false,
-        name: "Stempel-Status abrufen",
-        method: "GET",
-        endpoint: "ZEI/Stempel",
-      },
-      {
-        header: false,
-        name: "Einstempeln",
-        method: "POST",
-        endpoint: "ZEI/Stempel/starten",
-      },
-      {
-        header: false,
-        name: "Ausstempeln",
-        method: "POST",
-        endpoint: "ZEI/Stempel/stoppen",
-      },
-      {
-        header: false,
-        name: "Stunden abrufen",
-        method: "GET",
-        endpoint: "ZEI/Stunden",
-      },
-      {
-        header: false,
-        name: "Stunden für anderen Mitarbeiter abrufen",
-        desc: "Stunden für Mitarbeiter Nummer 3 absteigend sortiert und ohne eingebettete Objekte",
-        method: "GET",
-        endpoint:
-          "ZEI/Stunden?filter=Mitarbeiter==3&sort=-Datum,-StartZeit&depth=0",
-      },
-    ];
-
     /**
      * DOM Ready Event
      */
@@ -963,7 +772,6 @@
       $("#lblLoginTimeout").addClass("hidden");
 
       $("#btnCredentials").attr("disabled", "disabled");
-      $("#btnTemplates").attr("disabled", "disabled");
       $("#btnSend").attr("disabled", "disabled");
 
       // HTTP Methoden Dropdown initialisieren
@@ -998,29 +806,6 @@
 
       // Sende-Button initialisieren
       $("#iconSend").addClass("fa-paper-plane-o");
-
-      // Templates laden
-      for (var i = 0; i < REQUEST_TEMPLATES.length; i++) {
-        var template = REQUEST_TEMPLATES[i];
-        if (template.header) {
-          $("#listTemplates").append(
-            '<li class="dropdown-header">' + template.name + "</li>"
-          );
-        } else {
-          $("#listTemplates").append(
-            '<li><a href="#" class="lnkTemplate" data-tmplno="' +
-            i +
-            '">' +
-            ICON_HTTPMETHOD[template.method] +
-            " " +
-            template.name +
-            (template.desc
-              ? ' <small class="text-muted">(' + template.desc + ")</small>"
-              : "") +
-            "</a></li>"
-          );
-        }
-      }
 
       // URL-Parameter verarbeiten und Form initialisieren
       var paramUrl = getUrlParam("url");
@@ -1218,12 +1003,12 @@
         }
 
         // Darstellung Input Group
-        $("#btnHttpMethod, #btnTemplates").removeClass("btn-danger");
+        $("#btnHttpMethod").removeClass("btn-danger");
         $("#txtEndpoint")
           .closest("div.form-group")
           .removeClass("has-success");
         if (!endpointValid) {
-          $("#btnHttpMethod, #btnTemplates").addClass("btn-danger");
+          $("#btnHttpMethod").addClass("btn-danger");
         }
 
         // Request absenden
@@ -1236,26 +1021,9 @@
         );
       });
 
-      // Vorlagen > Eingabefelder leeren
-      $("#lnkRequestFormClean").click(function () {
-        $("#txtEndpoint, #txtHttpBody").val("");
-      });
-
       // Reset
       $("#btnResetDebugger").click(function () {
         location.reload();
-      });
-
-      // Template ausgewählt
-      $(".lnkTemplate").click(function () {
-        var template = REQUEST_TEMPLATES[$(this).attr("data-tmplno")];
-        setHttpMethod(template.method);
-        $("#txtEndpoint").val(
-          template.endpoint.replace("[RESTAPIPWD]", connectionSettings.pwd)
-        );
-        $("#txtHttpBody").val(
-          template.httpbody ? JSON.stringify(template.httpbody, null, 2) : ""
-        );
       });
     });
 
