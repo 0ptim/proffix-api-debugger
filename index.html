@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Proffix REST API Debugger</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href=""></i> 🔥 Tuned Debugger</a>
+      </div>
+      <div class="navbar-right">
+        <button type="button" id="btnRemoveSavedData" class="btn btn-danger btn-sm navbar-btn">
+          <i class="fa fa-trash-o fa-lg"></i> Gespeicherte Daten löschen
+        </button>
+        <button type="button" id="btnResetDebugger" class="btn btn-link btn-sm navbar-btn">
+          <i class="fa fa-refresh"></i> Reset
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="visible-xs-block" style="margin-top: 40px">&nbsp;</div>
+  <div class="container" style="margin-top: 40px">
+    <h2 class="page-header">
+      Verbindung<small class="pull-right">Schritt 1</small>
+    </h2>
+    <div class="row">
+      <div class="col-sm-9">
+        <p id="lblConnectionNot">
+          <i class="fa fa-plug fa-lg text-danger"></i> Nicht verbunden,
+          Verbindungseinstellungen prüfen
+        </p>
+        <p id="lblConnectionInProgress">
+          <i class="fa fa-cog fa-spin fa-lg fa-fw"></i> Verbinden...
+        </p>
+        <p id="lblConnectionOk">
+          <i class="fa fa-check-circle-o fa-lg text-success"></i> Verbunden
+          mit REST API <span id="lblRestApiVersion"></span>:
+          <span id="lblRestApiUrl"></span>
+        </p>
+        <p id="lblConnectionFailed">
+          <i class="fa fa-times-circle-o fa-lg text-danger"></i> Fehler beim
+          Verbinden aufgetreten, Log beachten
+        </p>
+      </div>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-default btn-block" data-toggle="modal"
+          data-target="#modalConnectionSettings" id="btnConnectionSetting">
+          <i class="fa fa-plug"></i> Verbindungseinstellungen
+        </button>
+      </div>
+    </div>
+    <h2 class="page-header">
+      Login<small class="pull-right">Schritt 2</small>
+    </h2>
+    <div class="row">
+      <div class="col-sm-9">
+        <p id="lblLoginNot">
+          <i class="fa fa-user-times fa-lg text-danger"></i> Nicht eingeloggt
+        </p>
+        <p id="lblLoginInProgress">
+          <i class="fa fa-cog fa-spin fa-lg fa-fw"></i> Login läuft...
+        </p>
+        <p id="lblLoginOk">
+          <i class="fa fa-check-circle-o fa-lg text-success"></i> Eingeloggt
+          als <span id="lblUsername"></span>
+          <button type="button" class="btn btn-link btn-sm" id="btnLogout">
+            <i class="fa fa-user-times"></i> Logout
+          </button>
+        </p>
+        <p id="lblLoginTimeout">
+          <i class="fa fa-exclamation-triangle fa-lg text-warning"></i>
+          Session abgelaufen oder ausgeloggt, bitte neu einloggen:
+          <button type="button" class="btn btn-warning" id="btnRelogin">
+            Erneut einloggen
+          </button>
+        </p>
+        <p id="lblLoginFailed">
+          <i class="fa fa-times-circle-o fa-lg text-danger"></i> Fehler beim
+          Login aufgetreten, Log beachten
+        </p>
+      </div>
+      <div class="col-sm-3">
+        <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#modalLogin"
+          id="btnCredentials">
+          <i class="fa fa-user"></i> Logindaten
+        </button>
+      </div>
+    </div>
+    <h2 class="page-header">
+      Requests<small class="pull-right">Schritt 3</small>
+    </h2>
+    <form id="requestform">
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+              id="btnHttpMethod"></button>
+            <ul class="dropdown-menu dropdown-menu" id="lstHttpMethods"></ul>
+          </div>
+          <input type="text" class="form-control" id="txtEndpoint" placeholder="Endpunkt..." />
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" id="btnTemplates" data-toggle="dropdown">
+              <i class="fa fa-bars"></i>&nbsp;&nbsp;&nbsp;<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" id="listTemplates">
+              <li>
+                <a href="#" id="lnkRequestFormClean"><i class="fa fa-trash-o"></i> Eingabefelder leeren</a>
+              </li>
+              <li class="divider"></li>
+            </ul>
+            <button type="submit" class="btn btn-primary" id="btnSend">
+              <i class="fa" id="iconSend"></i> Absenden
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="collapse form-group" id="httpbody">
+        <textarea class="form-control" rows="10" id="txtHttpBody" placeholder="HTTP Body..."></textarea>
+      </div>
+    </form>
+    <h2 class="page-header" style="padding-top: 50px">
+      Log
+      <div class="pull-right">
+        <button type="button" class="btn btn-danger btn-sm" id="btnLogClear">
+          <span class="fa fa-trash-o fa-lg"></span> Log leeren
+        </button>
+      </div>
+    </h2>
+    <div id="output"></div>
+  </div>
+
+  <div class="modal fade" id="modalConnectionSettings">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Verbindungseinstellungen</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="txtConnSettRestApiUrl" class="control-label col-sm-4">REST API URL</label>
+              <div class="col-sm-8">
+                <input type="url" class="form-control" id="txtConnSettRestApiUrl" placeholder="" />
+                <span class="helpBlock text-muted">
+                  z.B.: https://remote.proffix.net:11011/pxapi/v4</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="txtConnSettRestApiPwd" class="control-label col-sm-4">REST API Passwort</label>
+              <div class="col-sm-8">
+                <input type="password" class="form-control" id="txtConnSettRestApiPwd" />
+                <span class="helpBlock text-muted">in Klarschrift (nicht als Hash)</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="txtConnSettRestApiPwdHash" class="control-label col-sm-4">REST API Passwort (Hash)</label>
+              <div class="col-sm-8">
+                <input type="password" class="form-control" id="txtConnSettRestApiPwdHash" />
+                <span class="helpBlock text-muted">verschlüsselt (als Hash)</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="chkConnSettRemember" />
+                    Verbindungseinstellungen im Local Storage speichern
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            <i class="fa fa-times"></i> Abbrechen
+          </button>
+          <button type="button" class="btn btn-primary" id="btnConnect">
+            <i class="fa fa-plug"></i> Verbinden
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalLogin">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Login</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="selDatabase" class="control-label col-sm-4">Datenbank</label>
+              <div class="col-sm-8">
+                <select class="form-control" id="selDatabase"></select>
+                <span class="help-block text-muted small">Vor einem Wechsel der Datenbank zuerst ausloggen.</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="txtLoginUsername" class="control-label col-sm-4">Proffix Benutzername</label>
+              <div class="col-sm-8">
+                <input type="url" class="form-control" id="txtLoginUsername" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="txtLoginPwd" class="control-label col-sm-4">Proffix Passwort</label>
+              <div class="col-sm-8">
+                <input type="password" class="form-control" id="txtLoginPwd" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="txtLoginPwdHash" class="control-label col-sm-4">Proffix Passwort (HASH)</label>
+              <div class="col-sm-8">
+                <input type="password" class="form-control" id="txtLoginPwdHash" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-4">Module</label>
+              <div class="col-sm-8">
+                <div class="checkbox">
+                  <label class="checkbox-inline" style="padding-top: 0; margin-left: 0">
+                    <input type="checkbox" class="chkMod" value="ADR" />ADR
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="AUF" />AUF
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="BAS" />BAS
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="CRM" />CRM
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="DEB" />DEB
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="EIN" />EIN
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0; margin-left: 0">
+                    <input type="checkbox" class="chkMod" value="FIB" />FIB
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="KRE" />KRE
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="LAG" />LAG
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="LOH" />LOH
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="RES" />RES
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="SRV" />SRV
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0; margin-left: 0">
+                    <input type="checkbox" class="chkMod" value="STU" />STU
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="VOL" />VOL
+                  </label>
+                  <label class="checkbox-inline" style="padding-top: 0">
+                    <input type="checkbox" class="chkMod" value="ZEI" />ZEI
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="chkLoginRemember" /> Logindaten
+                    im Local Storage speichern
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger pull-left" id="btnLogoutModal">
+            <i class="fa fa-user-times"></i> Logout
+          </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            <i class="fa fa-times"></i> Abbrechen
+          </button>
+          <button type="button" class="btn btn-primary" id="btnLogin">
+            <i class="fa fa-user"></i> Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+    "use strict";
+
+    /**
+     * Login Objekt nach dem die Daten eingegeben wurden
+     */
+    var loginObject = null;
+
+    /**
+     * Verbindungseinstellungen nachdem die Daten eingegeben wurden
+     */
+    var connectionSettings = null;
+
+    /**
+     * Session ID
+     */
+    var pxSessionId;
+
+    /**
+     * Anzahl aktuell laufender Requests
+     */
+    var noOfRequests = 0;
+
+    /**
+     * War der Benutzer mal eingeloggt?
+     */
+    var wasLoggedIn = false;
+
+    /**
+     * REST API Call ausführen
+     * @param method HTTP Methode
+     * @param endpoint Aufzurufender Endpunkt ohne führenden Slash
+     * @param success Callback welcher nach erfolgreicher Abfrage ausgeführt wird
+     * @param error Callback welcher nach fehlerhafter Abfrage ausgeführt wird
+     * @param data Optionales Objekt welches der REST API gesendet wird (nur bei POST, PUT und PATCH)
+     */
+    var doApiCall = function (method, endpoint, success, error, data) {
+      noOfRequests++;
+
+      // Senden-Button Icon verändern
+      $("#iconSend")
+        .removeClass("fa-paper-plane-o")
+        .addClass("fa-spin")
+        .addClass("fa-cog");
+
+      var starttime = Date.now();
+      $.ajax({
+        url:
+          connectionSettings.url +
+          "/" +
+          endpoint
+            .replace(/^\/+/g, "")
+            .replace(/([pP][xX][aA][pP][iI]\/v[0-9]|v[0-9])/g, "")
+            .replace(/^\/+/g, ""),
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          PxSessionId: pxSessionId,
+        },
+        data: JSON.stringify(data),
+        timeout: 60000,
+        success: function (responseObject, status, request) {
+          var endtime = Date.now();
+          pxSessionId = request.getResponseHeader("PxSessionId"); // Potentiell neue Session ID merken
+          writeLog(
+            method.toUpperCase(),
+            endpoint,
+            request.status,
+            request.statusText,
+            responseObject ? JSON.stringify(responseObject, null, 2) : "",
+            data ? JSON.stringify(data, null, 2) : "",
+            endtime - starttime,
+            method == "POST" ? request.getResponseHeader("Location") : null
+          );
+
+          decreaseNoOfRequests();
+
+          $("#lblLoginTimeout").addClass("hidden");
+
+          // Callback ausführen wenn vorhanden
+          if (success != undefined) {
+            success(responseObject, status);
+          }
+        },
+        error: function (request) {
+          var endtime = Date.now();
+          pxSessionId = request.getResponseHeader("PxSessionId"); // Potentiell neue Session ID merken
+
+          // Bei Session Timeout, den Benutzer darauf aufmerksam machen
+          if (wasLoggedIn && request.status === 401) {
+            $("#lblLoginTimeout").removeClass("hidden");
+          }
+
+          // Versuchen Antwort als JSON zu parsen und schöner darzustellen
+          var responseTextForLog = request.responseText || "";
+          if (responseTextForLog.length > 0) {
+            try {
+              responseTextForLog = JSON.stringify(
+                JSON.parse(responseTextForLog),
+                null,
+                2
+              );
+            } catch (e) {
+              // Tue nichts, gib den Response Text aus
+            }
+          }
+
+          writeLog(
+            method.toUpperCase(),
+            endpoint,
+            request.status,
+            request.statusText,
+            responseTextForLog,
+            data ? JSON.stringify(data, null, 2) : "",
+            endtime - starttime
+          );
+
+          decreaseNoOfRequests();
+
+          // Callback ausführen wenn vorhanden
+          if (error != undefined) {
+            error(request.responseJSON, request.status);
+          }
+        },
+      });
+    };
+
+    /**
+     * Nach Abschluss des Requests den Requestzähler um 1 reduzieren und wenn er 0 erreicht drehendes Zahnrad auf Senden-Button entfernen
+     */
+    var decreaseNoOfRequests = function () {
+      noOfRequests--; // Senden-Button Icon zurücksetzen, wenn es der letzte Request war
+      if (noOfRequests === 0) {
+        $("#iconSend")
+          .removeClass("fa-spin")
+          .removeClass("fa-cog")
+          .addClass("fa-paper-plane-o");
+      }
+    };
+
+    /**
+     * Feld validieren
+     * @param inputElem jQuery-Element welches geprüft wird
+     * @param fieldValidation Methode welche die Prüfung durchführt: function(value) : boolean
+     */
+    var fieldValidation = function (inputElem, validationMethod) {
+      var formgroup = inputElem.closest("div.form-group");
+      formgroup.removeClass("has-error has-success");
+      if (validationMethod(inputElem.val())) {
+        formgroup.addClass("has-success");
+        return true;
+      } else {
+        formgroup.addClass("has-error");
+        return false;
+      }
+    };
+
+    /**
+     * Anzahl Logeinträge
+     */
+    var logcounter = 0;
+
+    /**
+     * Logeintrag schreiben
+     * @param method HTTP methode
+     * @param endpoint Aufgerufener Endpunkt
+     * @param statuscode Zurückgegener HTTP Statuscode
+     * @param statuscodetext Zum Statuscode dazugehörigen
+     * @param response Erhaltene Antwort
+     * @param request Gesendete Anfrage
+     * @param duration Benötigte Dauer für den Request
+     * @param locationHeader Location aus den HTTP-Headern bei POST
+     */
+    var writeLog = function (
+      method,
+      endpoint,
+      statuscode,
+      statuscodetext,
+      response,
+      request,
+      duration,
+      locationHeader
+    ) {
+      logcounter++;
+      var panel = $('<div class="panel"></div>');
+      if (statuscode >= 200 && statuscode < 300) {
+        panel.addClass("panel-success");
+      } else {
+        panel.addClass("panel-danger");
+      }
+
+      // Link für PRO/Liste/{ListeNr}/generieren-Response direkt inkl. pxSessionId anklickbar darstellen
+      if (locationHeader && locationHeader.includes("/PRO/Datei/")) {
+        locationHeader =
+          '<a href="' +
+          locationHeader +
+          "?pxSessionId=" +
+          pxSessionId +
+          '" target="_blank">' +
+          locationHeader +
+          "</a>";
+      }
+
+      panel.append(
+        '<div class="panel-heading"><small><strong>' +
+        method +
+        "</strong></small> " +
+        endpoint +
+        '<span class="pull-right"><small>' +
+        duration +
+        'ms</small></div></div><div class="panel-body"><div class="row"><div class="col-sm-6"><p><strong>HTTP Statuscode:</strong> ' +
+        statuscode +
+        ' <small class="text-muted">' +
+        statuscodetext +
+        '</small></p></div><div class="col-sm-6"><p><strong>PxSessionId: </strong>' +
+        pxSessionId +
+        "</p></div></div>" +
+        (locationHeader
+          ? '<div class="row"><div class="col-sm-12"><p><strong>HTTP Header "Location": </strong>' +
+          locationHeader +
+          "</p></div></div>"
+          : "") +
+        '<p><a data-toggle="collapse" href="#response' +
+        logcounter +
+        '">Response Body (Antwort)</a></p><div class="collapse" id="response' +
+        logcounter +
+        '"><pre>' +
+        response +
+        '</pre></div><p><a data-toggle="collapse" href="#request' +
+        logcounter +
+        '">Request Body (Anfrage)</a></p><div class="collapse" id="request' +
+        logcounter +
+        '"><pre>' +
+        request +
+        "</pre></div></div>"
+      );
+
+      $("#output").prepend(panel);
+    };
+
+    /**
+     * Zeigt den Button an mit dem alle Cookies gelöscht werden können
+     */
+    var showDeleteStorageButton = function () {
+      $("#btnRemoveSavedData").removeClass("hidden");
+    };
+
+    /**
+     * Verbindung aufbauen
+     * @param trySaveSettings Einstellungen versuchen zu speichern, wenn vom Modal her kommend
+     */
+    var doConnect = function (trySaveSettings) {
+      $("#lblConnectionNot").addClass("hidden");
+      $("#lblConnectionInProgress").removeClass("hidden");
+      $("#lblConnectionOk").addClass("hidden");
+      $("#lblConnectionFailed").addClass("hidden");
+      $("#btnCredentials").attr("disabled", "disabled");
+
+      doApiCall(
+        "GET",
+        "PRO/Info?key=" + connectionSettings.pwd,
+        function (info) {
+          $("#lblConnectionInProgress").addClass("hidden");
+          $("#lblConnectionOk").removeClass("hidden");
+
+          $("#lblRestApiVersion").text(info.Version);
+          $("#lblRestApiUrl").text(connectionSettings.url);
+
+          $("#btnCredentials").removeAttr("disabled");
+          $("#btnTemplates").removeAttr("disabled");
+          $("#btnSend").removeAttr("disabled");
+
+          // Einstellungen speichern wenn vom Modal her kommend
+          if (trySaveSettings) {
+            fieldValidation($("#txtConnSettRestApiUrl"), function (val) {
+              return true;
+            });
+            fieldValidation($("#txtConnSettRestApiPwd"), function (val) {
+              return true;
+            });
+            if ($("#chkConnSettRemember").val()) {
+              if (localStorage) {
+                localStorage.setItem(
+                  STORAGENAME_CONNECTIONSETTINGS,
+                  JSON.stringify({ default: connectionSettings })
+                );
+                showDeleteStorageButton();
+              }
+            }
+          }
+
+          // Datenbanken laden für den Login Modal
+          $("#selDatabase option").remove();
+          $("#selDatabase")
+            .attr("disabled", "disabled")
+            .append("<option>Keine Datenbanken gefunden</<option>");
+          doApiCall(
+            "GET",
+            "PRO/Datenbank?key=" + connectionSettings.pwd,
+            function (databases) {
+              $("#selDatabase option").remove();
+              $("#selDatabase").removeAttr("disabled");
+              $.each(databases, function (index, database) {
+                $("#selDatabase").append(
+                  '<option value="' +
+                  database.Name +
+                  '">' +
+                  database.Bezeichnung +
+                  " (" +
+                  database.Name +
+                  ")" +
+                  "</option>"
+                );
+              });
+
+              // Eintrag vorbelegen, wenn bereits eingeloggt wurden
+              if (
+                loginObject &&
+                loginObject.Datenbank &&
+                loginObject.Datenbank.Name
+              ) {
+                $("#selDatabase").val(loginObject.Datenbank.Name);
+              }
+            }
+          );
+        },
+        function () {
+          $("#lblConnectionInProgress").addClass("hidden");
+          $("#lblConnectionFailed").removeClass("hidden");
+        }
+      );
+    };
+
+    /**
+     * Login durchführen
+     * @params trySaveSettings Einstellungen versuchen zu speichern, wenn vom Modal her kommend
+     */
+    var doLogin = function (trySaveSettings) {
+      $("#lblLoginNot").addClass("hidden");
+      $("#lblLoginInProgress").removeClass("hidden");
+      $("#lblLoginOk").addClass("hidden");
+      $("#lblLoginFailed").addClass("hidden");
+
+      doApiCall(
+        "POST",
+        "PRO/Login",
+        function () {
+          $("#lblLoginInProgress").addClass("hidden");
+          $("#lblLoginOk").removeClass("hidden");
+          wasLoggedIn = true;
+
+          // Login Daten abrufen
+          doApiCall("GET", "PRO/Login", function (login) {
+            $("#lblUsername").text(
+              login.Benutzer +
+              " (" +
+              login.Mitarbeiter.Name +
+              ") auf " +
+              login.Datenbank.Name +
+              " (" +
+              login.Datenbank.Bezeichnung +
+              ")"
+            );
+          });
+
+          // Einstellungen speichern wenn vom Modal her kommend
+          if (trySaveSettings) {
+            fieldValidation($("#selDatabase"), function (val) {
+              return true;
+            });
+            fieldValidation($("#txtLoginUsername"), function (val) {
+              return true;
+            });
+            fieldValidation($("#txtLoginPwd"), function (val) {
+              return true;
+            });
+            if ($("#chkLoginRemember").val()) {
+              if (localStorage) {
+                localStorage.setItem(
+                  STORAGENAME_LOGINOBJECT,
+                  JSON.stringify({ default: loginObject })
+                );
+                showDeleteStorageButton();
+              }
+            }
+          }
+        },
+        function () {
+          $("#lblLoginInProgress").addClass("hidden");
+          $("#lblLoginFailed").removeClass("hidden");
+          wasLoggedIn = false;
+        },
+        loginObject
+      );
+    };
+
+    /**
+     * Aktuell selektierte HTTP-Methode
+     */
+    var selectedHttpMethod;
+
+    /**
+     * Setzt die aktuell selektierte HTTP-Methode
+     * @param method Zu setzende HTTP-Methode (GET, POST, PUT, PATCH, DELETE)
+     */
+    var setHttpMethod = function (method) {
+      selectedHttpMethod = method;
+      $("#btnHttpMethod").html(
+        ICON_HTTPMETHOD[method] +
+        " " +
+        method +
+        ' <span class="caret"></span>'
+      );
+
+      // HTTP Body Collapse wenn notwendig
+      var collapseElem = $("#httpbody");
+      if (
+        collapseElem.hasClass("collapse") &&
+        !collapseElem.hasClass("in") &&
+        (method == "POST" || method == "PUT" || method == "PATCH")
+      ) {
+        collapseElem.collapse("show");
+      } else if (
+        collapseElem.hasClass("collapse") &&
+        collapseElem.hasClass("in") &&
+        (method == "GET" || method == "DELETE")
+      ) {
+        collapseElem.collapse("hide");
+      }
+    };
+
+    /**
+     * Gibt einen URL-Parameter zurück
+     * @param name Zurückzugebender URL-Parameter
+     */
+    var getUrlParam = function (name) {
+      var url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return "";
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    };
+
+    // *** Konstanten
+    const STORAGENAME_CONNECTIONSETTINGS = "PxRestApiConnectionSettings";
+    const STORAGENAME_LOGINOBJECT = "PxRestApiLoginObject";
+    const ICON_HTTPMETHOD = {
+      GET: '<i class="fa fa-chevron-circle-down text-success"></i>',
+      POST: '<i class="fa fa-plus-circle text-warning"></i>',
+      PUT: '<i class="fa fa-chevron-circle-up text-warning"></i>',
+      PATCH: '<i class="fa fa-chevron-circle-up text-warning"></i>',
+      DELETE: '<i class="fa fa-times-circle text-danger"></i>',
+    };
+
+    const REQUEST_TEMPLATES = [
+      {
+        header: true,
+        name: "Allgemein",
+        // desc: "",
+        // method: "",
+        // endpoint: "",
+        // httpbody: ""
+      },
+      {
+        header: false,
+        name: "Datenbanken abrufen",
+        desc: "ohne Login möglich",
+        method: "GET",
+        endpoint: "PRO/Datenbank?key=[RESTAPIPWD]",
+      },
+      {
+        header: false,
+        name: "Info abrufen",
+        desc: "ohne Login möglich",
+        method: "GET",
+        endpoint: "PRO/Info?key=[RESTAPIPWD]",
+      },
+      {
+        header: false,
+        name: "Login-Objekt abrufen",
+        method: "GET",
+        endpoint: "PRO/Login",
+      },
+      {
+        header: true,
+        name: "Zusatztabellen und Zusatzfelder",
+      },
+      {
+        header: false,
+        name: "Zusatztabellen abrufen",
+        desc: "Zusatztabellen werden über die Felddefinitionen abgerufen",
+        method: "GET",
+        endpoint: "PRO/Felddefinition?limit=10000&filter=Zusatztabelle==true",
+      },
+      {
+        header: false,
+        name: "Zusatzfelder für Tabelle abrufen",
+        desc: "Beispiel: Zusatzfelder der ADR_Adressen",
+        method: "GET",
+        endpoint: "PRO/Felddefinition/ADR_Adressen?filter=Zusatzfeld==true",
+      },
+      {
+        header: true,
+        name: "Einstellungen",
+      },
+      {
+        header: false,
+        name: "Einstellung einzeln abrufen",
+        desc: "Beispiel: pxZeit / StandortZwingend",
+        method: "GET",
+        endpoint: "PRO/Einstellung/pxZeit/StandortZwingend",
+      },
+      {
+        header: false,
+        name: "Einstellung unverändert abrufen",
+        desc: "Beispiel: pxZeit / StandortZwingend",
+        method: "GET",
+        endpoint: "PRO/Einstellung/pxZeit/StandortZwingend?plain=yes",
+      },
+      {
+        header: false,
+        name: "Einstellung eines Moduls abrufen",
+        desc: "Beispiel: pxZeit",
+        method: "GET",
+        endpoint: "PRO/Einstellung/pxZeit",
+      },
+      {
+        header: true,
+        name: "Beispiele (Adressverwaltung)",
+      },
+      {
+        header: false,
+        name: "Adresse einzeln abrufen",
+        desc: "Beispiel: Adressnummer 1",
+        method: "GET",
+        endpoint: "ADR/Adresse/1",
+      },
+      {
+        header: false,
+        name: "Adresse mehrere abrufen",
+        desc: "max. 1000 Adressen, 3 Stufen einbetten",
+        method: "GET",
+        endpoint: "ADR/Adresse?limit=1000&depth=3",
+      },
+      {
+        header: false,
+        name: "Adresse anlegen",
+        method: "POST",
+        endpoint: "ADR/Adresse",
+        httpbody: {
+          Name: "Testadresse REST API Debugger",
+          PLZ: "7323",
+          Ort: "Wangs",
+        },
+      },
+      {
+        header: false,
+        name: "Adresse überschreiben",
+        desc: "Adresse mit der Nummer 1234567890 wird überschrieben",
+        method: "PUT",
+        endpoint: "ADR/Adresse/1234567890",
+        httpbody: {
+          AdressNr: 1234567890,
+          Name: "Testadresse REST API Debugger",
+          PLZ: "7323",
+          Ort: "Wangs",
+        },
+      },
+      {
+        header: false,
+        name: "Adresse aktualisieren",
+        desc: "Adresse mit der Nummer 1234567890 wird aktualisiert",
+        method: "PATCH",
+        endpoint: "ADR/Adresse/1234567890",
+        httpbody: { PLZ: "8620", Ort: "Wetzikon" },
+      },
+      {
+        header: false,
+        name: "Adresse löschen",
+        desc: "Adresse mit der Nummer 1234567890 wird gelöscht",
+        method: "DELETE",
+        endpoint: "ADR/Adresse/1234567890",
+      },
+      {
+        header: true,
+        name: "Beispiele (Zeitverwaltung)",
+      },
+      {
+        header: false,
+        name: "Stundeninfo abrufen",
+        desc: "Stundeninfo für den eingeloggten Mitarbeiter",
+        method: "GET",
+        endpoint: "ZEI/Stundeninfo",
+      },
+      {
+        header: false,
+        name: "Stundeninfo für anderen Mitarbeiter abrufen",
+        desc: "Stundeninfo für den Mitarbeiter mit der Mitarbeiternummer 3",
+        method: "GET",
+        endpoint: "ZEI/Stundeninfo?mitarbeiter=3",
+      },
+      {
+        header: false,
+        name: "Stempel-Status abrufen",
+        method: "GET",
+        endpoint: "ZEI/Stempel",
+      },
+      {
+        header: false,
+        name: "Einstempeln",
+        method: "POST",
+        endpoint: "ZEI/Stempel/starten",
+      },
+      {
+        header: false,
+        name: "Ausstempeln",
+        method: "POST",
+        endpoint: "ZEI/Stempel/stoppen",
+      },
+      {
+        header: false,
+        name: "Stunden abrufen",
+        method: "GET",
+        endpoint: "ZEI/Stunden",
+      },
+      {
+        header: false,
+        name: "Stunden für anderen Mitarbeiter abrufen",
+        desc: "Stunden für Mitarbeiter Nummer 3 absteigend sortiert und ohne eingebettete Objekte",
+        method: "GET",
+        endpoint:
+          "ZEI/Stunden?filter=Mitarbeiter==3&sort=-Datum,-StartZeit&depth=0",
+      },
+    ];
+
+    /**
+     * DOM Ready Event
+     */
+    $(document).ready(function () {
+      // Elemente ausblenden und disablen
+      $("#btnRemoveSavedData").addClass("hidden");
+      $("#lblConnectionInProgress").addClass("hidden");
+      $("#lblConnectionOk").addClass("hidden");
+      $("#lblConnectionFailed").addClass("hidden");
+      $("#lblLoginInProgress").addClass("hidden");
+      $("#lblLoginOk").addClass("hidden");
+      $("#lblLoginFailed").addClass("hidden");
+      $("#lblLoginTimeout").addClass("hidden");
+
+      $("#btnCredentials").attr("disabled", "disabled");
+      $("#btnTemplates").attr("disabled", "disabled");
+      $("#btnSend").attr("disabled", "disabled");
+
+      // HTTP Methoden Dropdown initialisieren
+      $("#lstHttpMethods").append(
+        '<li><a href="#" class="lnkMethod" data-httpmethod="GET">' +
+        ICON_HTTPMETHOD["GET"] +
+        ' GET <small class="text-muted">(abrufen)</small></a></li>'
+      );
+      $("#lstHttpMethods").append(
+        '<li><a href="#" class="lnkMethod" data-httpmethod="POST">' +
+        ICON_HTTPMETHOD["POST"] +
+        ' POST <small class="text-muted">(neu anlegen)</small></a></li>'
+      );
+      $("#lstHttpMethods").append(
+        '<li><a href="#" class="lnkMethod" data-httpmethod="PUT">' +
+        ICON_HTTPMETHOD["PUT"] +
+        ' PUT <small class="text-muted">(bestehend überschreiben)</small></a></li>'
+      );
+      $("#lstHttpMethods").append(
+        '<li><a href="#" class="lnkMethod" data-httpmethod="PATCH">' +
+        ICON_HTTPMETHOD["PATCH"] +
+        ' PATCH <small class="text-muted">(bestehend aktualisieren)</small></a></li>'
+      );
+      $("#lstHttpMethods").append(
+        '<li><a href="#" class="lnkMethod" data-httpmethod="DELETE">' +
+        ICON_HTTPMETHOD["DELETE"] +
+        ' DELETE <small class="text-muted">(löschen)</small></a></li>'
+      );
+
+      // Request-Felder initialisieren
+      setHttpMethod("GET");
+
+      // Sende-Button initialisieren
+      $("#iconSend").addClass("fa-paper-plane-o");
+
+      // Templates laden
+      for (var i = 0; i < REQUEST_TEMPLATES.length; i++) {
+        var template = REQUEST_TEMPLATES[i];
+        if (template.header) {
+          $("#listTemplates").append(
+            '<li class="dropdown-header">' + template.name + "</li>"
+          );
+        } else {
+          $("#listTemplates").append(
+            '<li><a href="#" class="lnkTemplate" data-tmplno="' +
+            i +
+            '">' +
+            ICON_HTTPMETHOD[template.method] +
+            " " +
+            template.name +
+            (template.desc
+              ? ' <small class="text-muted">(' + template.desc + ")</small>"
+              : "") +
+            "</a></li>"
+          );
+        }
+      }
+
+      // URL-Parameter verarbeiten und Form initialisieren
+      var paramUrl = getUrlParam("url");
+      var paramPwhash = getUrlParam("pwhash");
+      if (paramUrl != null && paramPwhash != null) {
+        connectionSettings = {
+          url: paramUrl + "/pxapi/v4",
+          pwd: paramPwhash,
+        };
+        $("#txtConnSettRestApiUrl").val(connectionSettings.url); // Nur URL abfüllen, kein Passwort
+      }
+
+      // LocalStoreage lesen und Form initialisieren (wenn eine URL-Parameter vorhanden sind)
+      if (localStorage && paramUrl == null && paramPwhash == null) {
+        var storageString = localStorage.getItem(
+          STORAGENAME_CONNECTIONSETTINGS
+        );
+        if (storageString) {
+          connectionSettings = JSON.parse(storageString).default; // Vorbereitung um mehrere Einstellungen zu speichern
+          $("#txtConnSettRestApiUrl").val(connectionSettings.url); // Nur URL abfüllen, kein Passwort
+          showDeleteStorageButton();
+        }
+        storageString = localStorage.getItem(STORAGENAME_LOGINOBJECT);
+        if (storageString) {
+          loginObject = JSON.parse(storageString).default; // Vorbereitung um mehrere Einstellungen zu speichern
+          // Datenbank wird erst vorbelegt, wenn die Datenbankeinträge geladen sind (doConnect())
+          $("#txtLoginUsername").val(loginObject.Benutzer); // Nur Benutzer abfüllen, kein Passwort
+          for (var i = 0; i < loginObject.Module.length; i++) {
+            // Loop durch Module um Häckchen zu setzen
+            var elem = $(".chkMod[value=" + loginObject.Module[i] + "]");
+            if (elem.length == 1) {
+              elem.prop("checked", true);
+            }
+          }
+          showDeleteStorageButton();
+        }
+      }
+
+      // Verbindung aufbauen und einloggen (wenn im Local Storage vorhanden)
+      if (connectionSettings) {
+        doConnect(false);
+      }
+      if (loginObject) {
+        doLogin(false);
+      }
+
+      // *** Events
+
+      // Verbindungseinstellungen > Verbinden
+      $("#btnConnect").click(function () {
+        if (
+          fieldValidation($("#txtConnSettRestApiUrl"), function (val) {
+            return val != "";
+          })
+        ) {
+          let passwordHash;
+          const clearTextPassword = $("#txtConnSettRestApiPwd").val();
+
+          if (clearTextPassword) {
+            // If there's a value in the clear text field, hash it
+            passwordHash = sha256(clearTextPassword).toString();
+          } else {
+            // If the clear text field is empty, use the value from the hash input field
+            passwordHash = $("#txtConnSettRestApiPwdHash").val();
+          }
+
+          // Validate that we have a password hash
+          if (passwordHash) {
+            connectionSettings = {
+              url: $("#txtConnSettRestApiUrl").val(),
+              pwd: passwordHash,
+            };
+            doConnect($("#chkConnSettRemember").val());
+            $("#modalConnectionSettings").modal("hide");
+          } else {
+            // Handle the case where no password is provided
+            alert("Please enter a password or provide a password hash.");
+          }
+        }
+      });
+
+      // Gespeicherte Daten löschen
+      $("#btnRemoveSavedData").click(function () {
+        if (localStorage) {
+          localStorage.clear();
+        }
+        $(this).addClass("hidden");
+      });
+
+      // Logindaten > Login
+      $("#btnLogin").click(function () {
+        if (
+          fieldValidation($("#selDatabase"), function (val) {
+            return val != "";
+          }) &&
+          fieldValidation($("#txtLoginUsername"), function (val) {
+            return val != "";
+          })
+        ) {
+          var modArr = [];
+          $(".chkMod:checked").each(function () {
+            modArr.push($(this).val()); // Alle ausgewählten Module ins Array
+          });
+
+          let passwordHash;
+          const clearTextPassword = $("#txtLoginPwd").val();
+
+          if (clearTextPassword) {
+            // If there's a value in the clear text field, hash it
+            passwordHash = sha256(clearTextPassword).toString();
+          } else {
+            // If the clear text field is empty, use the value from the hash input field
+            passwordHash = $("#txtLoginPwdHash").val();
+          }
+
+          // Validate that we have a password hash
+          if (passwordHash) {
+            loginObject = {
+              Benutzer: $("#txtLoginUsername").val(),
+              Passwort: passwordHash,
+              Module: modArr,
+              Datenbank: {
+                Name: $("#selDatabase").val(),
+              },
+            };
+            doLogin($("#chkLoginRemember").val());
+            $("#modalLogin").modal("hide");
+          } else {
+            // Handle the case where no password is provided
+            alert("Please enter a password or provide a password hash.");
+          }
+        }
+      });
+
+      // Logout
+      $("#btnLogout, #btnLogoutModal").click(function () {
+        doApiCall("DELETE", "PRO/Login");
+        $("#lblLoginInProgress").addClass("hidden");
+        $("#lblLoginOk").addClass("hidden");
+        $("#lblLoginFailed").addClass("hidden");
+        $("#lblLoginTimeout").addClass("hidden");
+        $("#lblLoginNot").removeClass("hidden");
+      });
+
+      // Session abgelaufen > Erneut einloggen
+      $("#btnRelogin").click(function () {
+        doLogin();
+      });
+
+      // Log leeren
+      $("#btnLogClear").click(function () {
+        $("#output").empty();
+      });
+
+      // HTTP-Methode wechseln
+      $(".lnkMethod").click(function (event) {
+        event.preventDefault();
+        setHttpMethod($(this).attr("data-httpmethod"));
+      });
+
+      // Request-Form absenden
+      $("#requestform").submit(function (event) {
+        event.preventDefault();
+
+        // Werte checken
+        var endpointValid = fieldValidation(
+          $("#txtEndpoint"),
+          function (val) {
+            return val != "" && val.length && val.length > 4;
+          }
+        );
+        var httpbodyValid = true;
+        var payload;
+        $("#lblHttpBodyError").remove(); // Allfällige Fehlermeldung vom HTTP Body entfernen
+        if (
+          selectedHttpMethod == "POST" ||
+          selectedHttpMethod == "PUT" ||
+          selectedHttpMethod == "PATCH"
+        ) {
+          httpbodyValid = fieldValidation($("#txtHttpBody"), function (val) {
+            if (val.length && val.length > 0) {
+              try {
+                payload = JSON.parse(val);
+              } catch (e) {
+                $("#txtHttpBody").after(
+                  '<span class="help-block" id="lblHttpBodyError">' +
+                  e +
+                  "</span>"
+                ); // Fehlermeldung einfügen
+                return false;
+              }
+            }
+            return true;
+          });
+        }
+
+        // Darstellung Input Group
+        $("#btnHttpMethod, #btnTemplates").removeClass("btn-danger");
+        $("#txtEndpoint")
+          .closest("div.form-group")
+          .removeClass("has-success");
+        if (!endpointValid) {
+          $("#btnHttpMethod, #btnTemplates").addClass("btn-danger");
+        }
+
+        // Request absenden
+        doApiCall(
+          selectedHttpMethod,
+          $("#txtEndpoint").val(),
+          null,
+          null,
+          payload
+        );
+      });
+
+      // Vorlagen > Eingabefelder leeren
+      $("#lnkRequestFormClean").click(function () {
+        $("#txtEndpoint, #txtHttpBody").val("");
+      });
+
+      // Reset
+      $("#btnResetDebugger").click(function () {
+        location.reload();
+      });
+
+      // Template ausgewählt
+      $(".lnkTemplate").click(function () {
+        var template = REQUEST_TEMPLATES[$(this).attr("data-tmplno")];
+        setHttpMethod(template.method);
+        $("#txtEndpoint").val(
+          template.endpoint.replace("[RESTAPIPWD]", connectionSettings.pwd)
+        );
+        $("#txtHttpBody").val(
+          template.httpbody ? JSON.stringify(template.httpbody, null, 2) : ""
+        );
+      });
+    });
+
+    // ***********************
+    // *** SHA 256
+    // *** js-sha256 v0.3.0 https://github.com/emn178/js-sha256
+    // *** Copyright 2014-2015, emn178@gmail.com
+    // *** Licensed under the MIT license: http://www.opensource.org/licenses/MIT
+    // ***********************
+    (function (I, R) {
+      var K = "undefined" != typeof module;
+      K && (I = global);
+      var a = "0123456789abcdef".split(""),
+        Q = [-2147483648, 8388608, 32768, 128],
+        C = [24, 16, 8, 0],
+        M = [
+          1116352408, 1899447441, 3049323471, 3921009573, 961987163,
+          1508970993, 2453635748, 2870763221, 3624381080, 310598401,
+          607225278, 1426881987, 1925078388, 2162078206, 2614888103,
+          3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983,
+          1249150122, 1555081692, 1996064986, 2554220882, 2821834349,
+          2952996808, 3210313671, 3336571891, 3584528711, 113926993,
+          338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700,
+          1986661051, 2177026350, 2456956037, 2730485921, 2820302411,
+          3259730800, 3345764771, 3516065817, 3600352804, 4094571909,
+          275423344, 430227734, 506948616, 659060556, 883997877, 958139571,
+          1322822218, 1537002063, 1747873779, 1955562222, 2024104815,
+          2227730452, 2361852424, 2428436474, 2756734187, 3204031479,
+          3329325298,
+        ],
+        c = [],
+        L = function (a) {
+          return A(a, !0);
+        },
+        A = function (D, A) {
+          var J = "string" != typeof D;
+          J && D.constructor == I.ArrayBuffer && (D = new Uint8Array(D));
+          var m,
+            n,
+            p,
+            q,
+            r,
+            t,
+            u,
+            v,
+            f,
+            K = !0,
+            L = !1,
+            b,
+            B = 0,
+            N = 0,
+            P = 0,
+            O = D.length,
+            e,
+            d,
+            E,
+            F,
+            G,
+            H;
+          A
+            ? ((m = 3238371032),
+              (n = 914150663),
+              (p = 812702999),
+              (q = 4144912697),
+              (r = 4290775857),
+              (t = 1750603025),
+              (u = 1694076839),
+              (v = 3204075428))
+            : ((m = 1779033703),
+              (n = 3144134277),
+              (p = 1013904242),
+              (q = 2773480762),
+              (r = 1359893119),
+              (t = 2600822924),
+              (u = 528734635),
+              (v = 1541459225));
+          f = 0;
+          do {
+            c[0] = f;
+            c[16] =
+              c[1] =
+              c[2] =
+              c[3] =
+              c[4] =
+              c[5] =
+              c[6] =
+              c[7] =
+              c[8] =
+              c[9] =
+              c[10] =
+              c[11] =
+              c[12] =
+              c[13] =
+              c[14] =
+              c[15] =
+              0;
+            if (J)
+              for (b = N; B < O && 64 > b; ++B)
+                c[b >> 2] |= D[B] << C[b++ & 3];
+            else
+              for (b = N; B < O && 64 > b; ++B)
+                (f = D.charCodeAt(B)),
+                  128 > f
+                    ? (c[b >> 2] |= f << C[b++ & 3])
+                    : (2048 > f
+                      ? (c[b >> 2] |= (192 | (f >> 6)) << C[b++ & 3])
+                      : (55296 > f || 57344 <= f
+                        ? (c[b >> 2] |= (224 | (f >> 12)) << C[b++ & 3])
+                        : ((f =
+                          65536 +
+                          (((f & 1023) << 10) |
+                            (D.charCodeAt(++B) & 1023))),
+                          (c[b >> 2] |= (240 | (f >> 18)) << C[b++ & 3]),
+                          (c[b >> 2] |=
+                            (128 | ((f >> 12) & 63)) << C[b++ & 3])),
+                        (c[b >> 2] |=
+                          (128 | ((f >> 6) & 63)) << C[b++ & 3])),
+                      (c[b >> 2] |= (128 | (f & 63)) << C[b++ & 3]));
+            P += b - N;
+            N = b - 64;
+            B == O && ((c[b >> 2] |= Q[b & 3]), ++B);
+            f = c[16];
+            B > O && 56 > b && ((c[15] = P << 3), (L = !0));
+            var w = m,
+              k = n,
+              l = p,
+              g = q,
+              x = r,
+              y = t,
+              z = u,
+              h = v;
+            for (b = 16; 64 > b; ++b)
+              (d = c[b - 15]),
+                (e =
+                  ((d >>> 7) | (d << 25)) ^
+                  ((d >>> 18) | (d << 14)) ^
+                  (d >>> 3)),
+                (d = c[b - 2]),
+                (d =
+                  ((d >>> 17) | (d << 15)) ^
+                  ((d >>> 19) | (d << 13)) ^
+                  (d >>> 10)),
+                (c[b] = (c[b - 16] + e + c[b - 7] + d) << 0);
+            H = k & l;
+            for (b = 0; 64 > b; b += 4)
+              K
+                ? (A
+                  ? ((G = 300032),
+                    (d = c[0] - 1413257819),
+                    (h = (d - 150054599) << 0),
+                    (g = (d + 24177077) << 0))
+                  : ((G = 704751109),
+                    (d = c[0] - 210244248),
+                    (h = (d - 1521486534) << 0),
+                    (g = (d + 143694565) << 0)),
+                  (K = !1))
+                : ((e =
+                  ((w >>> 2) | (w << 30)) ^
+                  ((w >>> 13) | (w << 19)) ^
+                  ((w >>> 22) | (w << 10))),
+                  (d =
+                    ((x >>> 6) | (x << 26)) ^
+                    ((x >>> 11) | (x << 21)) ^
+                    ((x >>> 25) | (x << 7))),
+                  (G = w & k),
+                  (E = G ^ (w & l) ^ H),
+                  (F = (x & y) ^ (~x & z)),
+                  (d = h + d + F + M[b] + c[b]),
+                  (e += E),
+                  (h = (g + d) << 0),
+                  (g = (d + e) << 0)),
+                (e =
+                  ((g >>> 2) | (g << 30)) ^
+                  ((g >>> 13) | (g << 19)) ^
+                  ((g >>> 22) | (g << 10))),
+                (d =
+                  ((h >>> 6) | (h << 26)) ^
+                  ((h >>> 11) | (h << 21)) ^
+                  ((h >>> 25) | (h << 7))),
+                (H = g & w),
+                (E = H ^ (g & k) ^ G),
+                (F = (h & x) ^ (~h & y)),
+                (d = z + d + F + M[b + 1] + c[b + 1]),
+                (e += E),
+                (z = (l + d) << 0),
+                (l = (d + e) << 0),
+                (e =
+                  ((l >>> 2) | (l << 30)) ^
+                  ((l >>> 13) | (l << 19)) ^
+                  ((l >>> 22) | (l << 10))),
+                (d =
+                  ((z >>> 6) | (z << 26)) ^
+                  ((z >>> 11) | (z << 21)) ^
+                  ((z >>> 25) | (z << 7))),
+                (G = l & g),
+                (E = G ^ (l & w) ^ H),
+                (F = (z & h) ^ (~z & x)),
+                (d = y + d + F + M[b + 2] + c[b + 2]),
+                (e += E),
+                (y = (k + d) << 0),
+                (k = (d + e) << 0),
+                (e =
+                  ((k >>> 2) | (k << 30)) ^
+                  ((k >>> 13) | (k << 19)) ^
+                  ((k >>> 22) | (k << 10))),
+                (d =
+                  ((y >>> 6) | (y << 26)) ^
+                  ((y >>> 11) | (y << 21)) ^
+                  ((y >>> 25) | (y << 7))),
+                (H = k & l),
+                (E = H ^ (k & g) ^ G),
+                (F = (y & z) ^ (~y & h)),
+                (d = x + d + F + M[b + 3] + c[b + 3]),
+                (e += E),
+                (x = (w + d) << 0),
+                (w = (d + e) << 0);
+            m = (m + w) << 0;
+            n = (n + k) << 0;
+            p = (p + l) << 0;
+            q = (q + g) << 0;
+            r = (r + x) << 0;
+            t = (t + y) << 0;
+            u = (u + z) << 0;
+            v = (v + h) << 0;
+          } while (!L);
+          J =
+            a[(m >> 28) & 15] +
+            a[(m >> 24) & 15] +
+            a[(m >> 20) & 15] +
+            a[(m >> 16) & 15] +
+            a[(m >> 12) & 15] +
+            a[(m >> 8) & 15] +
+            a[(m >> 4) & 15] +
+            a[m & 15] +
+            a[(n >> 28) & 15] +
+            a[(n >> 24) & 15] +
+            a[(n >> 20) & 15] +
+            a[(n >> 16) & 15] +
+            a[(n >> 12) & 15] +
+            a[(n >> 8) & 15] +
+            a[(n >> 4) & 15] +
+            a[n & 15] +
+            a[(p >> 28) & 15] +
+            a[(p >> 24) & 15] +
+            a[(p >> 20) & 15] +
+            a[(p >> 16) & 15] +
+            a[(p >> 12) & 15] +
+            a[(p >> 8) & 15] +
+            a[(p >> 4) & 15] +
+            a[p & 15] +
+            a[(q >> 28) & 15] +
+            a[(q >> 24) & 15] +
+            a[(q >> 20) & 15] +
+            a[(q >> 16) & 15] +
+            a[(q >> 12) & 15] +
+            a[(q >> 8) & 15] +
+            a[(q >> 4) & 15] +
+            a[q & 15] +
+            a[(r >> 28) & 15] +
+            a[(r >> 24) & 15] +
+            a[(r >> 20) & 15] +
+            a[(r >> 16) & 15] +
+            a[(r >> 12) & 15] +
+            a[(r >> 8) & 15] +
+            a[(r >> 4) & 15] +
+            a[r & 15] +
+            a[(t >> 28) & 15] +
+            a[(t >> 24) & 15] +
+            a[(t >> 20) & 15] +
+            a[(t >> 16) & 15] +
+            a[(t >> 12) & 15] +
+            a[(t >> 8) & 15] +
+            a[(t >> 4) & 15] +
+            a[t & 15] +
+            a[(u >> 28) & 15] +
+            a[(u >> 24) & 15] +
+            a[(u >> 20) & 15] +
+            a[(u >> 16) & 15] +
+            a[(u >> 12) & 15] +
+            a[(u >> 8) & 15] +
+            a[(u >> 4) & 15] +
+            a[u & 15];
+          A ||
+            (J +=
+              a[(v >> 28) & 15] +
+              a[(v >> 24) & 15] +
+              a[(v >> 20) & 15] +
+              a[(v >> 16) & 15] +
+              a[(v >> 12) & 15] +
+              a[(v >> 8) & 15] +
+              a[(v >> 4) & 15] +
+              a[v & 15]);
+          return J;
+        };
+      !I.JS_SHA256_TEST && K
+        ? ((A.sha256 = A), (A.sha224 = L), (module.exports = A))
+        : I && ((I.sha256 = A), (I.sha224 = L));
+    })(this);
+  </script>
+</body>
+
+</html>
