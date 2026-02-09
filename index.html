@@ -13,7 +13,7 @@
   <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href=""></i> 🔥 Tuned Debugger</a>
+        <a class="navbar-brand" href="">🔥 Tuned Debugger</a>
       </div>
       <div class="navbar-right">
         <button type="button" id="btnRemoveSavedData" class="btn btn-danger btn-sm navbar-btn">
@@ -219,58 +219,6 @@
               <label for="txtLoginPwdHash" class="control-label col-sm-4">Proffix Passwort (HASH)</label>
               <div class="col-sm-8">
                 <input type="password" class="form-control" id="txtLoginPwdHash" />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label col-sm-4">Module</label>
-              <div class="col-sm-8">
-                <div class="checkbox">
-                  <label class="checkbox-inline" style="padding-top: 0; margin-left: 0">
-                    <input type="checkbox" class="chkMod" value="ADR" />ADR
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="AUF" />AUF
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="BAS" />BAS
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="CRM" />CRM
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="DEB" />DEB
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="EIN" />EIN
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0; margin-left: 0">
-                    <input type="checkbox" class="chkMod" value="FIB" />FIB
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="KRE" />KRE
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="LAG" />LAG
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="LOH" />LOH
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="RES" />RES
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="SRV" />SRV
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0; margin-left: 0">
-                    <input type="checkbox" class="chkMod" value="STU" />STU
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="VOL" />VOL
-                  </label>
-                  <label class="checkbox-inline" style="padding-top: 0">
-                    <input type="checkbox" class="chkMod" value="ZEI" />ZEI
-                  </label>
-                </div>
               </div>
             </div>
             <div class="form-group">
@@ -833,13 +781,8 @@
           loginObject = JSON.parse(storageString).default; // Vorbereitung um mehrere Einstellungen zu speichern
           // Datenbank wird erst vorbelegt, wenn die Datenbankeinträge geladen sind (doConnect())
           $("#txtLoginUsername").val(loginObject.Benutzer); // Nur Benutzer abfüllen, kein Passwort
-          for (var i = 0; i < loginObject.Module.length; i++) {
-            // Loop durch Module um Häckchen zu setzen
-            var elem = $(".chkMod[value=" + loginObject.Module[i] + "]");
-            if (elem.length == 1) {
-              elem.prop("checked", true);
-            }
-          }
+          // Ensure the module is always set to "VOL"
+          loginObject.Module = ["VOL"];
           showDeleteStorageButton();
         }
       }
@@ -905,11 +848,8 @@
             return val != "";
           })
         ) {
-          var modArr = [];
-          $(".chkMod:checked").each(function () {
-            modArr.push($(this).val()); // Alle ausgewählten Module ins Array
-          });
-
+          // Instead of reading from checkboxes, always use "VOL"
+          var modArr = ["VOL"];
           let passwordHash;
           const clearTextPassword = $("#txtLoginPwd").val();
 
@@ -1135,13 +1075,12 @@
                         : ((f =
                           65536 +
                           (((f & 1023) << 10) |
-                            (D.charCodeAt(++B) & 1023))),
-                          (c[b >> 2] |= (240 | (f >> 18)) << C[b++ & 3]),
-                          (c[b >> 2] |=
-                            (128 | ((f >> 12) & 63)) << C[b++ & 3])),
+                            (D.charCodeAt(++B) & 1023)))),
+                        (c[b >> 2] |= (240 | (f >> 18)) << C[b++ & 3]),
                         (c[b >> 2] |=
-                          (128 | ((f >> 6) & 63)) << C[b++ & 3])),
-                      (c[b >> 2] |= (128 | (f & 63)) << C[b++ & 3]));
+                          (128 | ((f >> 12) & 63)) << C[b++ & 3])),
+                      (c[b >> 2] |=
+                        (128 | (f & 63)) << C[b++ & 3]));
             P += b - N;
             N = b - 64;
             B == O && ((c[b >> 2] |= Q[b & 3]), ++B);
