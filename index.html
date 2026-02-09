@@ -29,7 +29,7 @@
   <div class="visible-xs-block" style="margin-top: 40px">&nbsp;</div>
   <div class="container" style="margin-top: 40px">
     <h2 class="page-header">
-      Verbindung<small class="pull-right">Schritt 1</small>
+      Verbindung
     </h2>
     <div class="row">
       <div class="col-sm-9">
@@ -58,7 +58,7 @@
       </div>
     </div>
     <h2 class="page-header">
-      Login<small class="pull-right">Schritt 2</small>
+      Login
     </h2>
     <div class="row">
       <div class="col-sm-9">
@@ -95,7 +95,7 @@
       </div>
     </div>
     <h2 class="page-header">
-      Requests<small class="pull-right">Schritt 3</small>
+      Requests
     </h2>
     <form id="requestform">
       <div class="form-group">
@@ -397,12 +397,11 @@
      */
     var fieldValidation = function (inputElem, validationMethod) {
       var formgroup = inputElem.closest("div.form-group");
-      formgroup.removeClass("has-error has-success");
+      formgroup.removeClass("has-success");
       if (validationMethod(inputElem.val())) {
         formgroup.addClass("has-success");
         return true;
       } else {
-        formgroup.addClass("has-error");
         return false;
       }
     };
@@ -943,13 +942,9 @@
         }
 
         // Darstellung Input Group
-        $("#btnHttpMethod").removeClass("btn-danger");
         $("#txtEndpoint")
           .closest("div.form-group")
           .removeClass("has-success");
-        if (!endpointValid) {
-          $("#btnHttpMethod").addClass("btn-danger");
-        }
 
         // Request absenden
         doApiCall(
