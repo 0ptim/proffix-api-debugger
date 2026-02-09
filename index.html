@@ -1,399 +1,1621 @@
 <!doctype html>
-<html>
+<html lang="de">
   <head>
     <meta charset="utf-8" />
-    <title>Proffix REST API Debugger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Proffix API Debugger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+    <style>
+      /* ═══════════════════════════════════════════════
+       CSS Custom Properties
+       ═══════════════════════════════════════════════ */
+      :root {
+        --bg-primary: #0f1117;
+        --bg-secondary: #161822;
+        --bg-tertiary: #1c1f2e;
+        --bg-elevated: #232639;
+        --bg-input: #1a1d2e;
+        --border: #2a2d3e;
+        --border-focus: #5b6aff;
+        --text-primary: #e4e6f0;
+        --text-secondary: #8b8fa8;
+        --text-muted: #5a5e78;
+        --accent: #5b6aff;
+        --accent-hover: #4a58e0;
+        --accent-subtle: rgba(91, 106, 255, 0.12);
+        --success: #34d399;
+        --success-bg: rgba(52, 211, 153, 0.08);
+        --success-border: rgba(52, 211, 153, 0.2);
+        --warning: #fbbf24;
+        --warning-bg: rgba(251, 191, 36, 0.08);
+        --warning-border: rgba(251, 191, 36, 0.2);
+        --danger: #f87171;
+        --danger-bg: rgba(248, 113, 113, 0.08);
+        --danger-border: rgba(248, 113, 113, 0.2);
+        --info: #60a5fa;
+        --method-get: #34d399;
+        --method-post: #fbbf24;
+        --method-put: #fb923c;
+        --method-patch: #a78bfa;
+        --method-delete: #f87171;
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 14px;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+        --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+        --transition: 150ms ease;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Reset & Base
+       ═══════════════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-size: 15px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Layout
+       ═══════════════════════════════════════════════ */
+      .app {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Header
+       ═══════════════════════════════════════════════ */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+        z-index: 100;
+      }
+
+      .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+
+      .header-brand svg {
+        flex-shrink: 0;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Status Bar (Connection + Login)
+       ═══════════════════════════════════════════════ */
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid var(--border);
+        background: var(--bg-secondary);
+        white-space: nowrap;
+        transition: all var(--transition);
+      }
+
+      .status-pill .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .status-pill .dot.red {
+        background: var(--danger);
+        box-shadow: 0 0 6px var(--danger);
+      }
+      .status-pill .dot.green {
+        background: var(--success);
+        box-shadow: 0 0 6px var(--success);
+      }
+      .status-pill .dot.yellow {
+        background: var(--warning);
+        box-shadow: 0 0 6px var(--warning);
+      }
+
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      .status-pill .dot.pulse {
+        animation: pulse-dot 1.2s ease-in-out infinite;
+      }
+
+      .status-pill-btn {
+        cursor: pointer;
+        user-select: none;
+      }
+      .status-pill-btn:hover {
+        border-color: var(--border-focus);
+        background: var(--accent-subtle);
+      }
+
+      .status-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Buttons
+       ═══════════════════════════════════════════════ */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all var(--transition);
+        white-space: nowrap;
+        text-decoration: none;
+        line-height: 1.4;
+      }
+      .btn:hover {
+        border-color: var(--text-muted);
+        background: var(--bg-tertiary);
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+      }
+
+      .btn-danger {
+        color: var(--danger);
+        border-color: var(--danger-border);
+        background: var(--danger-bg);
+      }
+      .btn-danger:hover {
+        background: rgba(248, 113, 113, 0.15);
+        border-color: var(--danger);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        border-color: transparent;
+        color: var(--text-secondary);
+      }
+      .btn-ghost:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+      }
+
+      .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.78rem;
+      }
+
+      .btn-icon {
+        padding: 6px;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-radius: var(--radius-sm);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition);
+      }
+      .btn-icon:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+      }
+
+      /* ═══════════════════════════════════════════════
+       Request Builder
+       ═══════════════════════════════════════════════ */
+      .request-builder {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 4px;
+        margin-bottom: 24px;
+      }
+
+      .request-row {
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+
+      .method-selector {
+        position: relative;
+      }
+
+      .method-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 14px;
+        border: none;
+        border-radius: var(--radius-md);
+        background: transparent;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        white-space: nowrap;
+        letter-spacing: 0.02em;
+      }
+      .method-btn:hover {
+        background: var(--bg-tertiary);
+      }
+      .method-btn svg {
+        transition: transform var(--transition);
+      }
+      .method-btn.open svg {
+        transform: rotate(180deg);
+      }
+
+      .method-btn[data-method="GET"] {
+        color: var(--method-get);
+      }
+      .method-btn[data-method="POST"] {
+        color: var(--method-post);
+      }
+      .method-btn[data-method="PUT"] {
+        color: var(--method-put);
+      }
+      .method-btn[data-method="PATCH"] {
+        color: var(--method-patch);
+      }
+      .method-btn[data-method="DELETE"] {
+        color: var(--method-delete);
+      }
+
+      .method-dropdown {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 4px;
+        min-width: 170px;
+        box-shadow: var(--shadow-lg);
+        z-index: 200;
+        display: none;
+      }
+      .method-dropdown.show {
+        display: block;
+      }
+
+      .method-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border: none;
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        transition: background var(--transition);
+      }
+      .method-option:hover {
+        background: var(--bg-tertiary);
+      }
+      .method-option .method-label {
+        font-family: var(--font-sans);
+        font-weight: 400;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        margin-left: auto;
+      }
+      .method-option[data-method="GET"] .method-name {
+        color: var(--method-get);
+      }
+      .method-option[data-method="POST"] .method-name {
+        color: var(--method-post);
+      }
+      .method-option[data-method="PUT"] .method-name {
+        color: var(--method-put);
+      }
+      .method-option[data-method="PATCH"] .method-name {
+        color: var(--method-patch);
+      }
+      .method-option[data-method="DELETE"] .method-name {
+        color: var(--method-delete);
+      }
+
+      .endpoint-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        padding: 10px 12px;
+        outline: none;
+        min-width: 0;
+      }
+      .endpoint-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .send-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 20px;
+        border: none;
+        border-radius: var(--radius-md);
+        background: var(--accent);
+        color: #fff;
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        white-space: nowrap;
+        margin: 2px;
+      }
+      .send-btn:hover {
+        background: var(--accent-hover);
+      }
+      .send-btn:active {
+        transform: scale(0.97);
+      }
+      .send-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .send-btn .shortcut {
+        font-size: 0.7rem;
+        opacity: 0.6;
+        margin-left: 2px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .send-btn .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
+
+      .body-editor {
+        display: none;
+        padding: 0 4px 4px 4px;
+      }
+      .body-editor.show {
+        display: block;
+      }
+
+      .body-textarea {
+        width: 100%;
+        min-height: 180px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        padding: 14px;
+        outline: none;
+        resize: vertical;
+        line-height: 1.6;
+        transition: border-color var(--transition);
+      }
+      .body-textarea:focus {
+        border-color: var(--border-focus);
+      }
+      .body-textarea::placeholder {
+        color: var(--text-muted);
+      }
+
+      .body-error {
+        color: var(--danger);
+        font-size: 0.8rem;
+        padding: 6px 8px 0;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Section Headers
+       ═══════════════════════════════════════════════ */
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+      }
+
+      .section-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+      }
+
+      .log-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 100px;
+        background: var(--bg-tertiary);
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-left: 8px;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Log Entries
+       ═══════════════════════════════════════════════ */
+      .log-entry {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        margin-bottom: 10px;
+        overflow: hidden;
+        transition: border-color var(--transition);
+      }
+      .log-entry:hover {
+        border-color: var(--text-muted);
+      }
+
+      .log-entry.success {
+        border-left: 3px solid var(--success);
+      }
+      .log-entry.error {
+        border-left: 3px solid var(--danger);
+      }
+
+      .log-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .log-method {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        letter-spacing: 0.03em;
+      }
+      .log-method.GET {
+        color: var(--method-get);
+        background: rgba(52, 211, 153, 0.1);
+      }
+      .log-method.POST {
+        color: var(--method-post);
+        background: rgba(251, 191, 36, 0.1);
+      }
+      .log-method.PUT {
+        color: var(--method-put);
+        background: rgba(251, 147, 60, 0.1);
+      }
+      .log-method.PATCH {
+        color: var(--method-patch);
+        background: rgba(167, 139, 250, 0.1);
+      }
+      .log-method.DELETE {
+        color: var(--method-delete);
+        background: rgba(248, 113, 113, 0.1);
+      }
+
+      .log-endpoint {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--text-primary);
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .log-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+
+      .log-status {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+      .log-status.ok {
+        color: var(--success);
+        background: rgba(52, 211, 153, 0.1);
+      }
+      .log-status.err {
+        color: var(--danger);
+        background: rgba(248, 113, 113, 0.1);
+      }
+
+      .log-duration {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        min-width: 50px;
+        text-align: right;
+      }
+
+      .log-time {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+      }
+
+      .log-chevron {
+        color: var(--text-muted);
+        transition: transform var(--transition);
+        flex-shrink: 0;
+      }
+      .log-entry.expanded .log-chevron {
+        transform: rotate(180deg);
+      }
+
+      .log-body {
+        display: none;
+        border-top: 1px solid var(--border);
+        padding: 0;
+      }
+      .log-entry.expanded .log-body {
+        display: block;
+      }
+
+      .log-details {
+        display: flex;
+        gap: 16px;
+        padding: 12px 16px;
+        font-size: 0.8rem;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .log-detail {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .log-detail-label {
+        color: var(--text-muted);
+      }
+      .log-detail-value {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+      }
+
+      .log-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .log-tab {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+      .log-tab:hover {
+        color: var(--text-secondary);
+      }
+      .log-tab.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+
+      .log-tab-content {
+        display: none;
+      }
+      .log-tab-content.active {
+        display: block;
+      }
+
+      .log-code-wrap {
+        position: relative;
+      }
+
+      .log-code {
+        padding: 14px 16px;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .log-code::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .log-code::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .log-code::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 4px 10px;
+        font-size: 0.72rem;
+        font-weight: 500;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--bg-elevated);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all var(--transition);
+        font-family: var(--font-sans);
+        z-index: 5;
+      }
+      .copy-btn:hover {
+        border-color: var(--text-muted);
+        color: var(--text-primary);
+      }
+      .copy-btn.copied {
+        color: var(--success);
+        border-color: var(--success-border);
+      }
+
+      .log-location {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.8rem;
+      }
+      .log-location a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .log-location a:hover {
+        text-decoration: underline;
+      }
+
+      .log-empty {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+      .log-empty svg {
+        margin-bottom: 12px;
+        opacity: 0.3;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Modals
+       ═══════════════════════════════════════════════ */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 480px;
+        box-shadow: var(--shadow-lg);
+        animation: modal-in 200ms ease;
+      }
+
+      @keyframes modal-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-title {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        transition: all var(--transition);
+      }
+      .modal-close:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+      }
+
+      .modal-body {
+        padding: 22px;
+      }
+
+      .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 16px 22px;
+        border-top: 1px solid var(--border);
+      }
+      .modal-footer .btn-left {
+        margin-right: auto;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Form Fields
+       ═══════════════════════════════════════════════ */
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+      }
+
+      .form-input,
+      .form-select {
+        width: 100%;
+        padding: 9px 12px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color var(--transition);
+      }
+      .form-input:focus,
+      .form-select:focus {
+        border-color: var(--border-focus);
+      }
+      .form-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .form-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235a5e78' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+        cursor: pointer;
+      }
+      .form-select option {
+        background: var(--bg-elevated);
+        color: var(--text-primary);
+      }
+
+      .form-hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .form-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 0.83rem;
+        color: var(--text-secondary);
+      }
+      .form-check input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+
+      .form-group.has-success .form-input,
+      .form-group.has-success .form-select {
+        border-color: var(--success);
+      }
+
+      /* ═══════════════════════════════════════════════
+       Session Timeout Banner
+       ═══════════════════════════════════════════════ */
+      .timeout-banner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        margin-bottom: 16px;
+        border: 1px solid var(--warning-border);
+        background: var(--warning-bg);
+        border-radius: var(--radius-md);
+        font-size: 0.85rem;
+        color: var(--warning);
+      }
+      .timeout-banner .btn {
+        flex-shrink: 0;
+      }
+
+      /* ═══════════════════════════════════════════════
+       Scrollbar
+       ═══════════════════════════════════════════════ */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+      }
+
+      /* ═══════════════════════════════════════════════
+       Responsive
+       ═══════════════════════════════════════════════ */
+      @media (max-width: 640px) {
+        .header {
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .status-bar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .status-actions {
+          margin-left: 0;
+        }
+        .log-meta {
+          gap: 8px;
+        }
+        .log-duration {
+          display: none;
+        }
+        .request-row {
+          flex-wrap: wrap;
+        }
+        .endpoint-input {
+          min-width: 100%;
+        }
+        .send-btn {
+          width: 100%;
+          justify-content: center;
+        }
+        .send-btn .shortcut {
+          display: none;
+        }
+      }
+    </style>
   </head>
-
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="">🔥 Tuned Debugger</a>
-        </div>
-        <div class="navbar-right">
+    <div class="app">
+      <!-- Header -->
+      <header class="header">
+        <a class="header-brand" href="">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"
+            />
+            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2" />
+          </svg>
+          Proffix API Debugger
+        </a>
+        <div class="header-actions">
           <button
             type="button"
+            class="btn btn-danger btn-sm hidden"
             id="btnRemoveSavedData"
-            class="btn btn-danger btn-sm navbar-btn"
           >
-            <i class="fa fa-trash-o fa-lg"></i> Gespeicherte Daten löschen
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="3 6 5 6 21 6" />
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              />
+            </svg>
+            Daten löschen
           </button>
           <button
             type="button"
+            class="btn btn-ghost btn-sm"
             id="btnResetDebugger"
-            class="btn btn-link btn-sm navbar-btn"
           >
-            <i class="fa fa-refresh"></i> Reset
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="23 4 23 10 17 10" />
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+            </svg>
+            Reset
           </button>
         </div>
-      </div>
-    </nav>
+      </header>
 
-    <div class="visible-xs-block" style="margin-top: 40px">&nbsp;</div>
-    <div class="container" style="margin-top: 40px">
-      <h2 class="page-header">Verbindung</h2>
-      <div class="row">
-        <div class="col-sm-9">
-          <p id="lblConnectionNot">
-            <i class="fa fa-plug fa-lg text-danger"></i> Nicht verbunden,
-            Verbindungseinstellungen prüfen
-          </p>
-          <p id="lblConnectionInProgress">
-            <i class="fa fa-cog fa-spin fa-lg fa-fw"></i> Verbinden...
-          </p>
-          <p id="lblConnectionOk">
-            <i class="fa fa-check-circle-o fa-lg text-success"></i> Verbunden
-            mit REST API <span id="lblRestApiVersion"></span>:
-            <span id="lblRestApiUrl"></span>
-          </p>
-          <p id="lblConnectionFailed">
-            <i class="fa fa-times-circle-o fa-lg text-danger"></i> Fehler beim
-            Verbinden aufgetreten, Log beachten
-          </p>
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <!-- Connection states -->
+        <div class="status-pill" id="lblConnectionNot">
+          <span class="dot red"></span>
+          Nicht verbunden
         </div>
-        <div class="col-sm-3">
+        <div class="status-pill hidden" id="lblConnectionInProgress">
+          <span class="dot yellow pulse"></span>
+          Verbinden...
+        </div>
+        <div class="status-pill hidden" id="lblConnectionOk">
+          <span class="dot green"></span>
+          API <span id="lblRestApiVersion"></span>&nbsp;·&nbsp;<span
+            id="lblRestApiUrl"
+            style="opacity: 0.7"
+          ></span>
+        </div>
+        <div class="status-pill hidden" id="lblConnectionFailed">
+          <span class="dot red"></span>
+          Verbindungsfehler
+        </div>
+
+        <!-- Login states -->
+        <div class="status-pill hidden" id="lblLoginNot">
+          <span class="dot red"></span>
+          Nicht eingeloggt
+        </div>
+        <div class="status-pill hidden" id="lblLoginInProgress">
+          <span class="dot yellow pulse"></span>
+          Login...
+        </div>
+        <div class="status-pill hidden" id="lblLoginOk">
+          <span class="dot green"></span>
+          <span id="lblUsername"></span>
+        </div>
+        <div class="status-pill hidden" id="lblLoginFailed">
+          <span class="dot red"></span>
+          Login fehlgeschlagen
+        </div>
+
+        <!-- Status actions -->
+        <div class="status-actions">
+          <button type="button" class="btn btn-sm" id="btnConnectionSetting">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            Verbindung
+          </button>
+          <button type="button" class="btn btn-sm" id="btnCredentials" disabled>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Login
+          </button>
           <button
             type="button"
-            class="btn btn-default btn-block"
-            data-toggle="modal"
-            data-target="#modalConnectionSettings"
-            id="btnConnectionSetting"
+            class="btn btn-ghost btn-sm hidden"
+            id="btnLogout"
           >
-            <i class="fa fa-plug"></i> Verbindungseinstellungen
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
           </button>
         </div>
       </div>
-      <h2 class="page-header">Login</h2>
-      <div class="row">
-        <div class="col-sm-9">
-          <p id="lblLoginNot">
-            <i class="fa fa-user-times fa-lg text-danger"></i> Nicht eingeloggt
-          </p>
-          <p id="lblLoginInProgress">
-            <i class="fa fa-cog fa-spin fa-lg fa-fw"></i> Login läuft...
-          </p>
-          <p id="lblLoginOk">
-            <i class="fa fa-check-circle-o fa-lg text-success"></i> Eingeloggt
-            als <span id="lblUsername"></span>
-            <button type="button" class="btn btn-link btn-sm" id="btnLogout">
-              <i class="fa fa-user-times"></i> Logout
-            </button>
-          </p>
-          <p id="lblLoginTimeout">
-            <i class="fa fa-exclamation-triangle fa-lg text-warning"></i>
-            Session abgelaufen oder ausgeloggt, bitte neu einloggen:
-            <button type="button" class="btn btn-warning" id="btnRelogin">
-              Erneut einloggen
-            </button>
-          </p>
-          <p id="lblLoginFailed">
-            <i class="fa fa-times-circle-o fa-lg text-danger"></i> Fehler beim
-            Login aufgetreten, Log beachten
-          </p>
-        </div>
-        <div class="col-sm-3">
-          <button
-            type="button"
-            class="btn btn-default btn-block"
-            data-toggle="modal"
-            data-target="#modalLogin"
-            id="btnCredentials"
-          >
-            <i class="fa fa-user"></i> Logindaten
-          </button>
-        </div>
+
+      <!-- Session Timeout Banner -->
+      <div class="timeout-banner hidden" id="lblLoginTimeout">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        Session abgelaufen
+        <button type="button" class="btn btn-sm" id="btnRelogin">
+          Erneut einloggen
+        </button>
       </div>
-      <h2 class="page-header">Requests</h2>
-      <form id="requestform">
-        <div class="form-group">
-          <div class="input-group">
-            <div class="input-group-btn">
+
+      <!-- Request Builder -->
+      <div class="request-builder">
+        <form id="requestform">
+          <div class="request-row">
+            <div class="method-selector">
               <button
                 type="button"
-                class="btn btn-default dropdown-toggle"
-                data-toggle="dropdown"
+                class="method-btn"
                 id="btnHttpMethod"
-              ></button>
-              <ul class="dropdown-menu dropdown-menu" id="lstHttpMethods"></ul>
+                data-method="GET"
+              >
+                <span class="method-text">GET</span>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div class="method-dropdown" id="lstHttpMethods">
+                <button type="button" class="method-option" data-method="GET">
+                  <span class="method-name">GET</span
+                  ><span class="method-label">abrufen</span>
+                </button>
+                <button type="button" class="method-option" data-method="POST">
+                  <span class="method-name">POST</span
+                  ><span class="method-label">anlegen</span>
+                </button>
+                <button type="button" class="method-option" data-method="PUT">
+                  <span class="method-name">PUT</span
+                  ><span class="method-label">überschreiben</span>
+                </button>
+                <button type="button" class="method-option" data-method="PATCH">
+                  <span class="method-name">PATCH</span
+                  ><span class="method-label">aktualisieren</span>
+                </button>
+                <button
+                  type="button"
+                  class="method-option"
+                  data-method="DELETE"
+                >
+                  <span class="method-name">DELETE</span
+                  ><span class="method-label">löschen</span>
+                </button>
+              </div>
             </div>
             <input
               type="text"
-              class="form-control"
+              class="endpoint-input"
               id="txtEndpoint"
-              placeholder="Endpunkt..."
+              placeholder="z.B. ADR/Adresse/1"
+              autocomplete="off"
+              spellcheck="false"
             />
-            <div class="input-group-btn">
-              <button type="submit" class="btn btn-primary" id="btnSend">
-                <i class="fa" id="iconSend"></i> Absenden
-              </button>
-            </div>
+            <button type="submit" class="send-btn" id="btnSend" disabled>
+              <span id="iconSend">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              </span>
+              Send
+              <span class="shortcut">Ctrl+↵</span>
+            </button>
           </div>
+          <div class="body-editor" id="httpbody">
+            <textarea
+              class="body-textarea"
+              id="txtHttpBody"
+              placeholder='{ "key": "value" }'
+              spellcheck="false"
+            ></textarea>
+            <div class="body-error hidden" id="lblHttpBodyError"></div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Log Section -->
+      <div class="section-header">
+        <div>
+          <span class="section-title">Response Log</span>
+          <span class="log-count hidden" id="logCount">0</span>
         </div>
-        <div class="collapse form-group" id="httpbody">
-          <textarea
-            class="form-control"
-            rows="10"
-            id="txtHttpBody"
-            placeholder="HTTP Body..."
-          ></textarea>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnLogClear">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            />
+          </svg>
+          Leeren
+        </button>
+      </div>
+
+      <div id="output">
+        <div class="log-empty" id="logEmpty">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <div>Noch keine Requests gesendet</div>
         </div>
-      </form>
-      <h2 class="page-header" style="padding-top: 50px">
-        Log
-        <div class="pull-right">
-          <button type="button" class="btn btn-danger btn-sm" id="btnLogClear">
-            <span class="fa fa-trash-o fa-lg"></span> Log leeren
+      </div>
+
+      <div style="height: 60px"></div>
+    </div>
+
+    <!-- Connection Settings Modal -->
+    <div class="modal-overlay" id="modalConnectionSettings">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Verbindungseinstellungen</h3>
+          <button type="button" class="modal-close" data-dismiss="modal">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </div>
-      </h2>
-      <div id="output"></div>
-    </div>
-
-    <div class="modal fade" id="modalConnectionSettings">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="txtConnSettRestApiUrl"
+              >REST API URL</label
             >
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">Verbindungseinstellungen</h4>
+            <input
+              type="url"
+              class="form-input"
+              id="txtConnSettRestApiUrl"
+              placeholder="https://remote.proffix.net:11011/pxapi/v4"
+            />
+            <div class="form-hint">
+              z.B. https://remote.proffix.net:11011/pxapi/v4
+            </div>
           </div>
-          <div class="modal-body">
-            <form class="form-horizontal">
-              <div class="form-group">
-                <label
-                  for="txtConnSettRestApiUrl"
-                  class="control-label col-sm-4"
-                  >REST API URL</label
-                >
-                <div class="col-sm-8">
-                  <input
-                    type="url"
-                    class="form-control"
-                    id="txtConnSettRestApiUrl"
-                    placeholder=""
-                  />
-                  <span class="helpBlock text-muted">
-                    z.B.: https://remote.proffix.net:11011/pxapi/v4</span
-                  >
-                </div>
-              </div>
-              <div class="form-group">
-                <label
-                  for="txtConnSettRestApiPwd"
-                  class="control-label col-sm-4"
-                  >REST API Passwort</label
-                >
-                <div class="col-sm-8">
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="txtConnSettRestApiPwd"
-                  />
-                  <span class="helpBlock text-muted"
-                    >in Klarschrift (nicht als Hash)</span
-                  >
-                </div>
-              </div>
-              <div class="form-group">
-                <label
-                  for="txtConnSettRestApiPwdHash"
-                  class="control-label col-sm-4"
-                  >REST API Passwort (Hash)</label
-                >
-                <div class="col-sm-8">
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="txtConnSettRestApiPwdHash"
-                  />
-                  <span class="helpBlock text-muted"
-                    >verschlüsselt (als Hash)</span
-                  >
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="col-sm-offset-4 col-sm-8">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="chkConnSettRemember" />
-                      Verbindungseinstellungen im Local Storage speichern
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </form>
+          <div class="form-group">
+            <label class="form-label" for="txtConnSettRestApiPwd"
+              >Passwort (Klartext)</label
+            >
+            <input
+              type="password"
+              class="form-input"
+              id="txtConnSettRestApiPwd"
+              placeholder="Wird automatisch gehasht"
+            />
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">
-              <i class="fa fa-times"></i> Abbrechen
-            </button>
-            <button type="button" class="btn btn-primary" id="btnConnect">
-              <i class="fa fa-plug"></i> Verbinden
-            </button>
+          <div class="form-group">
+            <label class="form-label" for="txtConnSettRestApiPwdHash"
+              >Passwort (SHA-256 Hash)</label
+            >
+            <input
+              type="password"
+              class="form-input"
+              id="txtConnSettRestApiPwdHash"
+              placeholder="Alternativ: bereits gehashtes Passwort"
+            />
           </div>
+          <div class="form-group">
+            <label class="form-check">
+              <input type="checkbox" id="chkConnSettRemember" />
+              Im Local Storage speichern
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-dismiss="modal">
+            Abbrechen
+          </button>
+          <button type="button" class="btn btn-primary" id="btnConnect">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            Verbinden
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="modal fade" id="modalLogin">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="modalLogin">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Login</h3>
+          <button type="button" class="modal-close" data-dismiss="modal">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">Login</h4>
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="selDatabase">Datenbank</label>
+            <select class="form-select" id="selDatabase"></select>
+            <div class="form-hint">Vor einem Wechsel zuerst ausloggen.</div>
           </div>
-          <div class="modal-body">
-            <form class="form-horizontal">
-              <div class="form-group">
-                <label for="selDatabase" class="control-label col-sm-4"
-                  >Datenbank</label
-                >
-                <div class="col-sm-8">
-                  <select class="form-control" id="selDatabase"></select>
-                  <span class="help-block text-muted small"
-                    >Vor einem Wechsel der Datenbank zuerst ausloggen.</span
-                  >
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtLoginUsername" class="control-label col-sm-4"
-                  >Proffix Benutzername</label
-                >
-                <div class="col-sm-8">
-                  <input
-                    type="url"
-                    class="form-control"
-                    id="txtLoginUsername"
-                  />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtLoginPwd" class="control-label col-sm-4"
-                  >Proffix Passwort</label
-                >
-                <div class="col-sm-8">
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="txtLoginPwd"
-                  />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtLoginPwdHash" class="control-label col-sm-4"
-                  >Proffix Passwort (HASH)</label
-                >
-                <div class="col-sm-8">
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="txtLoginPwdHash"
-                  />
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="col-sm-offset-4 col-sm-8">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="chkLoginRemember" /> Logindaten
-                      im Local Storage speichern
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger pull-left"
-              id="btnLogoutModal"
+          <div class="form-group">
+            <label class="form-label" for="txtLoginUsername"
+              >Benutzername</label
             >
-              <i class="fa fa-user-times"></i> Logout
-            </button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">
-              <i class="fa fa-times"></i> Abbrechen
-            </button>
-            <button type="button" class="btn btn-primary" id="btnLogin">
-              <i class="fa fa-user"></i> Login
-            </button>
+            <input
+              type="text"
+              class="form-input"
+              id="txtLoginUsername"
+              autocomplete="username"
+            />
           </div>
+          <div class="form-group">
+            <label class="form-label" for="txtLoginPwd"
+              >Passwort (Klartext)</label
+            >
+            <input
+              type="password"
+              class="form-input"
+              id="txtLoginPwd"
+              autocomplete="current-password"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="txtLoginPwdHash"
+              >Passwort (SHA-256 Hash)</label
+            >
+            <input type="password" class="form-input" id="txtLoginPwdHash" />
+          </div>
+          <div class="form-group">
+            <label class="form-check">
+              <input type="checkbox" id="chkLoginRemember" />
+              Im Local Storage speichern
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger btn-left"
+            id="btnLogoutModal"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </button>
+          <button type="button" class="btn" data-dismiss="modal">
+            Abbrechen
+          </button>
+          <button type="button" class="btn btn-primary" id="btnLogin">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
+            Login
+          </button>
         </div>
       </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
       "use strict";
 
-      /**
-       * Login Objekt nach dem die Daten eingegeben wurden
-       */
+      // ═══════════════════════════════════════════════
+      // State
+      // ═══════════════════════════════════════════════
       var loginObject = null;
-
-      /**
-       * Verbindungseinstellungen nachdem die Daten eingegeben wurden
-       */
       var connectionSettings = null;
-
-      /**
-       * Session ID
-       */
       var pxSessionId;
-
-      /**
-       * Anzahl aktuell laufender Requests
-       */
       var noOfRequests = 0;
-
-      /**
-       * War der Benutzer mal eingeloggt?
-       */
       var wasLoggedIn = false;
+      var selectedHttpMethod = "GET";
+      var logcounter = 0;
 
-      /**
-       * REST API Call ausführen
-       * @param method HTTP Methode
-       * @param endpoint Aufzurufender Endpunkt ohne führenden Slash
-       * @param success Callback welcher nach erfolgreicher Abfrage ausgeführt wird
-       * @param error Callback welcher nach fehlerhafter Abfrage ausgeführt wird
-       * @param data Optionales Objekt welches der REST API gesendet wird (nur bei POST, PUT und PATCH)
-       */
+      // ═══════════════════════════════════════════════
+      // Constants
+      // ═══════════════════════════════════════════════
+      const STORAGENAME_CONNECTIONSETTINGS = "PxRestApiConnectionSettings";
+      const STORAGENAME_LOGINOBJECT = "PxRestApiLoginObject";
+
+      // ═══════════════════════════════════════════════
+      // Custom modal show/hide (replaces Bootstrap modals)
+      // ═══════════════════════════════════════════════
+      function showModal(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.add("show");
+        }
+      }
+      function hideModal(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.remove("show");
+        }
+      }
+      // Close on overlay click or dismiss buttons
+      $(document).on("click", ".modal-overlay", function (e) {
+        if (e.target === this) $(this).removeClass("show");
+      });
+      $(document).on("click", "[data-dismiss='modal']", function () {
+        $(this).closest(".modal-overlay").removeClass("show");
+      });
+      // Esc to close
+      $(document).on("keydown", function (e) {
+        if (e.key === "Escape") $(".modal-overlay.show").removeClass("show");
+      });
+
+      // ═══════════════════════════════════════════════
+      // API Call
+      // ═══════════════════════════════════════════════
       var doApiCall = function (method, endpoint, success, error, data) {
         noOfRequests++;
-
-        // Senden-Button Icon verändern
-        $("#iconSend")
-          .removeClass("fa-paper-plane-o")
-          .addClass("fa-spin")
-          .addClass("fa-cog");
+        updateSendButton();
 
         var starttime = Date.now();
         $.ajax({
@@ -413,7 +1635,7 @@
           timeout: 60000,
           success: function (responseObject, status, request) {
             var endtime = Date.now();
-            pxSessionId = request.getResponseHeader("PxSessionId"); // Potentiell neue Session ID merken
+            pxSessionId = request.getResponseHeader("PxSessionId");
             writeLog(
               method.toUpperCase(),
               endpoint,
@@ -424,26 +1646,16 @@
               endtime - starttime,
               method == "POST" ? request.getResponseHeader("Location") : null,
             );
-
             decreaseNoOfRequests();
-
             $("#lblLoginTimeout").addClass("hidden");
-
-            // Callback ausführen wenn vorhanden
-            if (success != undefined) {
-              success(responseObject, status);
-            }
+            if (success != undefined) success(responseObject, status);
           },
           error: function (request) {
             var endtime = Date.now();
-            pxSessionId = request.getResponseHeader("PxSessionId"); // Potentiell neue Session ID merken
-
-            // Bei Session Timeout, den Benutzer darauf aufmerksam machen
+            pxSessionId = request.getResponseHeader("PxSessionId");
             if (wasLoggedIn && request.status === 401) {
               $("#lblLoginTimeout").removeClass("hidden");
             }
-
-            // Versuchen Antwort als JSON zu parsen und schöner darzustellen
             var responseTextForLog = request.responseText || "";
             if (responseTextForLog.length > 0) {
               try {
@@ -452,11 +1664,8 @@
                   null,
                   2,
                 );
-              } catch (e) {
-                // Tue nichts, gib den Response Text aus
-              }
+              } catch (e) {}
             }
-
             writeLog(
               method.toUpperCase(),
               endpoint,
@@ -466,62 +1675,75 @@
               data ? JSON.stringify(data, null, 2) : "",
               endtime - starttime,
             );
-
             decreaseNoOfRequests();
-
-            // Callback ausführen wenn vorhanden
-            if (error != undefined) {
-              error(request.responseJSON, request.status);
-            }
+            if (error != undefined) error(request.responseJSON, request.status);
           },
         });
       };
 
-      /**
-       * Nach Abschluss des Requests den Requestzähler um 1 reduzieren und wenn er 0 erreicht drehendes Zahnrad auf Senden-Button entfernen
-       */
-      var decreaseNoOfRequests = function () {
-        noOfRequests--; // Senden-Button Icon zurücksetzen, wenn es der letzte Request war
-        if (noOfRequests === 0) {
-          $("#iconSend")
-            .removeClass("fa-spin")
-            .removeClass("fa-cog")
-            .addClass("fa-paper-plane-o");
+      // ═══════════════════════════════════════════════
+      // Send Button State
+      // ═══════════════════════════════════════════════
+      var updateSendButton = function () {
+        if (noOfRequests > 0) {
+          $("#iconSend").html('<span class="spinner"></span>');
+        } else {
+          $("#iconSend").html(
+            '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+          );
         }
       };
 
-      /**
-       * Feld validieren
-       * @param inputElem jQuery-Element welches geprüft wird
-       * @param fieldValidation Methode welche die Prüfung durchführt: function(value) : boolean
-       */
+      var decreaseNoOfRequests = function () {
+        noOfRequests--;
+        if (noOfRequests === 0) updateSendButton();
+      };
+
+      // ═══════════════════════════════════════════════
+      // Field Validation
+      // ═══════════════════════════════════════════════
       var fieldValidation = function (inputElem, validationMethod) {
         var formgroup = inputElem.closest("div.form-group");
         formgroup.removeClass("has-success");
         if (validationMethod(inputElem.val())) {
           formgroup.addClass("has-success");
           return true;
-        } else {
-          return false;
         }
+        return false;
       };
 
-      /**
-       * Anzahl Logeinträge
-       */
-      var logcounter = 0;
+      // ═══════════════════════════════════════════════
+      // Syntax Highlighting for JSON
+      // ═══════════════════════════════════════════════
+      function syntaxHighlight(json) {
+        if (!json) return "";
+        json = json
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        return json.replace(
+          /("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            var cls = "color:#a78bfa"; // number
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = "color:#60a5fa"; // key
+              } else {
+                cls = "color:#34d399"; // string
+              }
+            } else if (/true|false/.test(match)) {
+              cls = "color:#fbbf24"; // boolean
+            } else if (/null/.test(match)) {
+              cls = "color:#f87171"; // null
+            }
+            return '<span style="' + cls + '">' + match + "</span>";
+          },
+        );
+      }
 
-      /**
-       * Logeintrag schreiben
-       * @param method HTTP methode
-       * @param endpoint Aufgerufener Endpunkt
-       * @param statuscode Zurückgegener HTTP Statuscode
-       * @param statuscodetext Zum Statuscode dazugehörigen
-       * @param response Erhaltene Antwort
-       * @param request Gesendete Anfrage
-       * @param duration Benötigte Dauer für den Request
-       * @param locationHeader Location aus den HTTP-Headern bei POST
-       */
+      // ═══════════════════════════════════════════════
+      // Write Log Entry
+      // ═══════════════════════════════════════════════
       var writeLog = function (
         method,
         endpoint,
@@ -533,73 +1755,157 @@
         locationHeader,
       ) {
         logcounter++;
-        var panel = $('<div class="panel"></div>');
-        if (statuscode >= 200 && statuscode < 300) {
-          panel.addClass("panel-success");
-        } else {
-          panel.addClass("panel-danger");
+        $("#logEmpty").addClass("hidden");
+        updateLogCount();
+
+        var isSuccess = statuscode >= 200 && statuscode < 300;
+        var statusClass = isSuccess ? "ok" : "err";
+        var entryClass = isSuccess ? "success" : "error";
+        var now = new Date();
+        var timeStr = now.toLocaleTimeString("de-CH", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
+        // Build location HTML
+        var locationHtml = "";
+        if (locationHeader) {
+          if (locationHeader.includes("/PRO/Datei/")) {
+            locationHtml =
+              '<div class="log-location"><span style="color:var(--text-muted)">Location:</span> <a href="' +
+              locationHeader +
+              "?pxSessionId=" +
+              pxSessionId +
+              '" target="_blank">' +
+              locationHeader +
+              "</a></div>";
+          } else {
+            locationHtml =
+              '<div class="log-location"><span style="color:var(--text-muted)">Location:</span> ' +
+              escapeHtml(locationHeader) +
+              "</div>";
+          }
         }
 
-        // Link für PRO/Liste/{ListeNr}/generieren-Response direkt inkl. pxSessionId anklickbar darstellen
-        if (locationHeader && locationHeader.includes("/PRO/Datei/")) {
-          locationHeader =
-            '<a href="' +
-            locationHeader +
-            "?pxSessionId=" +
-            pxSessionId +
-            '" target="_blank">' +
-            locationHeader +
-            "</a>";
-        }
+        var id = "log-" + logcounter;
+        var highlightedResponse = response
+          ? syntaxHighlight(response)
+          : '<span style="color:var(--text-muted)">— leer —</span>';
+        var highlightedRequest = request
+          ? syntaxHighlight(request)
+          : '<span style="color:var(--text-muted)">— leer —</span>';
 
-        panel.append(
-          '<div class="panel-heading"><small><strong>' +
+        var entry = $(
+          '<div class="log-entry ' +
+            entryClass +
+            ' expanded" data-id="' +
+            id +
+            '">' +
+            '<div class="log-header">' +
+            '<span class="log-method ' +
             method +
-            "</strong></small> " +
-            endpoint +
-            '<span class="pull-right"><small>' +
-            duration +
-            'ms</small></div></div><div class="panel-body"><div class="row"><div class="col-sm-6"><p><strong>HTTP Statuscode:</strong> ' +
+            '">' +
+            method +
+            "</span>" +
+            '<span class="log-endpoint">' +
+            escapeHtml(endpoint) +
+            "</span>" +
+            '<div class="log-meta">' +
+            '<span class="log-status ' +
+            statusClass +
+            '">' +
             statuscode +
-            ' <small class="text-muted">' +
+            " " +
             statuscodetext +
-            '</small></p></div><div class="col-sm-6"><p><strong>PxSessionId: </strong>' +
-            pxSessionId +
-            "</p></div></div>" +
-            (locationHeader
-              ? '<div class="row"><div class="col-sm-12"><p><strong>HTTP Header "Location": </strong>' +
-                locationHeader +
-                "</p></div></div>"
-              : "") +
-            '<p><a data-toggle="collapse" href="#response' +
-            logcounter +
-            '">Response Body (Antwort)</a></p><div class="collapse" id="response' +
-            logcounter +
-            '"><pre>' +
-            response +
-            '</pre></div><p><a data-toggle="collapse" href="#request' +
-            logcounter +
-            '">Request Body (Anfrage)</a></p><div class="collapse" id="request' +
-            logcounter +
-            '"><pre>' +
-            request +
-            "</pre></div></div>",
+            "</span>" +
+            '<span class="log-duration">' +
+            duration +
+            "ms</span>" +
+            '<span class="log-time">' +
+            timeStr +
+            "</span>" +
+            '<svg class="log-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+            "</div>" +
+            "</div>" +
+            '<div class="log-body">' +
+            '<div class="log-details">' +
+            '<div class="log-detail"><span class="log-detail-label">Session:</span> <span class="log-detail-value">' +
+            (pxSessionId || "—") +
+            "</span></div>" +
+            "</div>" +
+            locationHtml +
+            '<div class="log-tabs">' +
+            '<button type="button" class="log-tab active" data-tab="response-' +
+            id +
+            '">Response</button>' +
+            '<button type="button" class="log-tab" data-tab="request-' +
+            id +
+            '">Request</button>' +
+            "</div>" +
+            '<div class="log-tab-content active" id="response-' +
+            id +
+            '">' +
+            '<div class="log-code-wrap">' +
+            '<button type="button" class="copy-btn" data-copy="response" data-id="' +
+            id +
+            '">Copy</button>' +
+            '<div class="log-code">' +
+            highlightedResponse +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            '<div class="log-tab-content" id="request-' +
+            id +
+            '">' +
+            '<div class="log-code-wrap">' +
+            '<button type="button" class="copy-btn" data-copy="request" data-id="' +
+            id +
+            '">Copy</button>' +
+            '<div class="log-code">' +
+            highlightedRequest +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>",
         );
 
-        $("#output").prepend(panel);
+        // Store raw data for copy
+        entry.data("response", response || "");
+        entry.data("request", request || "");
+
+        $("#output").prepend(entry);
       };
 
-      /**
-       * Zeigt den Button an mit dem alle Cookies gelöscht werden können
-       */
+      function updateLogCount() {
+        var count = $("#output .log-entry").length;
+        if (count > 0) {
+          $("#logCount").text(count).removeClass("hidden");
+        } else {
+          $("#logCount").addClass("hidden");
+        }
+      }
+
+      function escapeHtml(str) {
+        if (!str) return "";
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      // ═══════════════════════════════════════════════
+      // Show Delete Storage Button
+      // ═══════════════════════════════════════════════
       var showDeleteStorageButton = function () {
         $("#btnRemoveSavedData").removeClass("hidden");
       };
 
-      /**
-       * Verbindung aufbauen
-       * @param trySaveSettings Einstellungen versuchen zu speichern, wenn vom Modal her kommend
-       */
+      // ═══════════════════════════════════════════════
+      // Connect
+      // ═══════════════════════════════════════════════
       var doConnect = function (trySaveSettings) {
         $("#lblConnectionNot").addClass("hidden");
         $("#lblConnectionInProgress").removeClass("hidden");
@@ -613,19 +1919,21 @@
           function (info) {
             $("#lblConnectionInProgress").addClass("hidden");
             $("#lblConnectionOk").removeClass("hidden");
-
             $("#lblRestApiVersion").text(info.Version);
             $("#lblRestApiUrl").text(connectionSettings.url);
-
             $("#btnCredentials").removeAttr("disabled");
             $("#btnSend").removeAttr("disabled");
 
-            // Einstellungen speichern wenn vom Modal her kommend
+            // Show login-not after connected
+            if (!wasLoggedIn) {
+              $("#lblLoginNot").removeClass("hidden");
+            }
+
             if (trySaveSettings) {
-              fieldValidation($("#txtConnSettRestApiUrl"), function (val) {
+              fieldValidation($("#txtConnSettRestApiUrl"), function () {
                 return true;
               });
-              fieldValidation($("#txtConnSettRestApiPwd"), function (val) {
+              fieldValidation($("#txtConnSettRestApiPwd"), function () {
                 return true;
               });
               if ($("#chkConnSettRemember").val()) {
@@ -639,11 +1947,11 @@
               }
             }
 
-            // Datenbanken laden für den Login Modal
+            // Load databases
             $("#selDatabase option").remove();
             $("#selDatabase")
               .attr("disabled", "disabled")
-              .append("<option>Keine Datenbanken gefunden</<option>");
+              .append("<option>Keine Datenbanken gefunden</option>");
             doApiCall(
               "GET",
               "PRO/Datenbank?key=" + connectionSettings.pwd,
@@ -658,12 +1966,9 @@
                       database.Bezeichnung +
                       " (" +
                       database.Name +
-                      ")" +
-                      "</option>",
+                      ")</option>",
                   );
                 });
-
-                // Eintrag vorbelegen, wenn bereits eingeloggt wurden
                 if (
                   loginObject &&
                   loginObject.Datenbank &&
@@ -681,10 +1986,9 @@
         );
       };
 
-      /**
-       * Login durchführen
-       * @params trySaveSettings Einstellungen versuchen zu speichern, wenn vom Modal her kommend
-       */
+      // ═══════════════════════════════════════════════
+      // Login
+      // ═══════════════════════════════════════════════
       var doLogin = function (trySaveSettings) {
         $("#lblLoginNot").addClass("hidden");
         $("#lblLoginInProgress").removeClass("hidden");
@@ -697,31 +2001,23 @@
           function () {
             $("#lblLoginInProgress").addClass("hidden");
             $("#lblLoginOk").removeClass("hidden");
+            $("#btnLogout").removeClass("hidden");
             wasLoggedIn = true;
 
-            // Login Daten abrufen
             doApiCall("GET", "PRO/Login", function (login) {
               $("#lblUsername").text(
-                login.Benutzer +
-                  " (" +
-                  login.Mitarbeiter.Name +
-                  ") auf " +
-                  login.Datenbank.Name +
-                  " (" +
-                  login.Datenbank.Bezeichnung +
-                  ")",
+                login.Benutzer + " · " + login.Datenbank.Name,
               );
             });
 
-            // Einstellungen speichern wenn vom Modal her kommend
             if (trySaveSettings) {
-              fieldValidation($("#selDatabase"), function (val) {
+              fieldValidation($("#selDatabase"), function () {
                 return true;
               });
-              fieldValidation($("#txtLoginUsername"), function (val) {
+              fieldValidation($("#txtLoginUsername"), function () {
                 return true;
               });
-              fieldValidation($("#txtLoginPwd"), function (val) {
+              fieldValidation($("#txtLoginPwd"), function () {
                 return true;
               });
               if ($("#chkLoginRemember").val()) {
@@ -744,45 +2040,27 @@
         );
       };
 
-      /**
-       * Aktuell selektierte HTTP-Methode
-       */
-      var selectedHttpMethod;
-
-      /**
-       * Setzt die aktuell selektierte HTTP-Methode
-       * @param method Zu setzende HTTP-Methode (GET, POST, PUT, PATCH, DELETE)
-       */
+      // ═══════════════════════════════════════════════
+      // Set HTTP Method
+      // ═══════════════════════════════════════════════
       var setHttpMethod = function (method) {
         selectedHttpMethod = method;
-        $("#btnHttpMethod").html(
-          ICON_HTTPMETHOD[method] +
-            " " +
-            method +
-            ' <span class="caret"></span>',
-        );
+        var btn = document.getElementById("btnHttpMethod");
+        btn.setAttribute("data-method", method);
+        btn.querySelector(".method-text").textContent = method;
 
-        // HTTP Body Collapse wenn notwendig
-        var collapseElem = $("#httpbody");
-        if (
-          collapseElem.hasClass("collapse") &&
-          !collapseElem.hasClass("in") &&
-          (method == "POST" || method == "PUT" || method == "PATCH")
-        ) {
-          collapseElem.collapse("show");
-        } else if (
-          collapseElem.hasClass("collapse") &&
-          collapseElem.hasClass("in") &&
-          (method == "GET" || method == "DELETE")
-        ) {
-          collapseElem.collapse("hide");
+        // Show/hide body editor
+        var bodyEditor = document.getElementById("httpbody");
+        if (method === "POST" || method === "PUT" || method === "PATCH") {
+          bodyEditor.classList.add("show");
+        } else {
+          bodyEditor.classList.remove("show");
         }
       };
 
-      /**
-       * Gibt einen URL-Parameter zurück
-       * @param name Zurückzugebender URL-Parameter
-       */
+      // ═══════════════════════════════════════════════
+      // URL Params
+      // ═══════════════════════════════════════════════
       var getUrlParam = function (name) {
         var url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
@@ -793,68 +2071,11 @@
         return decodeURIComponent(results[2].replace(/\+/g, " "));
       };
 
-      // *** Konstanten
-      const STORAGENAME_CONNECTIONSETTINGS = "PxRestApiConnectionSettings";
-      const STORAGENAME_LOGINOBJECT = "PxRestApiLoginObject";
-      const ICON_HTTPMETHOD = {
-        GET: '<i class="fa fa-chevron-circle-down text-success"></i>',
-        POST: '<i class="fa fa-plus-circle text-warning"></i>',
-        PUT: '<i class="fa fa-chevron-circle-up text-warning"></i>',
-        PATCH: '<i class="fa fa-chevron-circle-up text-warning"></i>',
-        DELETE: '<i class="fa fa-times-circle text-danger"></i>',
-      };
-
-      /**
-       * DOM Ready Event
-       */
+      // ═══════════════════════════════════════════════
+      // DOM Ready
+      // ═══════════════════════════════════════════════
       $(document).ready(function () {
-        // Elemente ausblenden und disablen
-        $("#btnRemoveSavedData").addClass("hidden");
-        $("#lblConnectionInProgress").addClass("hidden");
-        $("#lblConnectionOk").addClass("hidden");
-        $("#lblConnectionFailed").addClass("hidden");
-        $("#lblLoginInProgress").addClass("hidden");
-        $("#lblLoginOk").addClass("hidden");
-        $("#lblLoginFailed").addClass("hidden");
-        $("#lblLoginTimeout").addClass("hidden");
-
-        $("#btnCredentials").attr("disabled", "disabled");
-        $("#btnSend").attr("disabled", "disabled");
-
-        // HTTP Methoden Dropdown initialisieren
-        $("#lstHttpMethods").append(
-          '<li><a href="#" class="lnkMethod" data-httpmethod="GET">' +
-            ICON_HTTPMETHOD["GET"] +
-            ' GET <small class="text-muted">(abrufen)</small></a></li>',
-        );
-        $("#lstHttpMethods").append(
-          '<li><a href="#" class="lnkMethod" data-httpmethod="POST">' +
-            ICON_HTTPMETHOD["POST"] +
-            ' POST <small class="text-muted">(neu anlegen)</small></a></li>',
-        );
-        $("#lstHttpMethods").append(
-          '<li><a href="#" class="lnkMethod" data-httpmethod="PUT">' +
-            ICON_HTTPMETHOD["PUT"] +
-            ' PUT <small class="text-muted">(bestehend überschreiben)</small></a></li>',
-        );
-        $("#lstHttpMethods").append(
-          '<li><a href="#" class="lnkMethod" data-httpmethod="PATCH">' +
-            ICON_HTTPMETHOD["PATCH"] +
-            ' PATCH <small class="text-muted">(bestehend aktualisieren)</small></a></li>',
-        );
-        $("#lstHttpMethods").append(
-          '<li><a href="#" class="lnkMethod" data-httpmethod="DELETE">' +
-            ICON_HTTPMETHOD["DELETE"] +
-            ' DELETE <small class="text-muted">(löschen)</small></a></li>',
-        );
-
-        // Request-Felder initialisieren
-        setHttpMethod("GET");
-
-        // Sende-Button initialisieren
-        $("#iconSend").addClass("fa-paper-plane-o");
-
-        // URL-Parameter verarbeiten und Form initialisieren
+        // URL params
         var paramUrl = getUrlParam("url");
         var paramPwhash = getUrlParam("pwhash");
         if (paramUrl != null && paramPwhash != null) {
@@ -862,41 +2083,46 @@
             url: paramUrl + "/pxapi/v4",
             pwd: paramPwhash,
           };
-          $("#txtConnSettRestApiUrl").val(connectionSettings.url); // Nur URL abfüllen, kein Passwort
+          $("#txtConnSettRestApiUrl").val(connectionSettings.url);
         }
 
-        // LocalStoreage lesen und Form initialisieren (wenn eine URL-Parameter vorhanden sind)
+        // Local Storage
         if (localStorage && paramUrl == null && paramPwhash == null) {
           var storageString = localStorage.getItem(
             STORAGENAME_CONNECTIONSETTINGS,
           );
           if (storageString) {
-            connectionSettings = JSON.parse(storageString).default; // Vorbereitung um mehrere Einstellungen zu speichern
-            $("#txtConnSettRestApiUrl").val(connectionSettings.url); // Nur URL abfüllen, kein Passwort
+            connectionSettings = JSON.parse(storageString).default;
+            $("#txtConnSettRestApiUrl").val(connectionSettings.url);
             showDeleteStorageButton();
           }
           storageString = localStorage.getItem(STORAGENAME_LOGINOBJECT);
           if (storageString) {
-            loginObject = JSON.parse(storageString).default; // Vorbereitung um mehrere Einstellungen zu speichern
-            // Datenbank wird erst vorbelegt, wenn die Datenbankeinträge geladen sind (doConnect())
-            $("#txtLoginUsername").val(loginObject.Benutzer); // Nur Benutzer abfüllen, kein Passwort
-            // Ensure the module is always set to "VOL"
+            loginObject = JSON.parse(storageString).default;
+            $("#txtLoginUsername").val(loginObject.Benutzer);
             loginObject.Module = ["VOL"];
             showDeleteStorageButton();
           }
         }
 
-        // Verbindung aufbauen und einloggen (wenn im Local Storage vorhanden)
-        if (connectionSettings) {
-          doConnect(false);
-        }
-        if (loginObject) {
-          doLogin(false);
-        }
+        // Auto-connect and login
+        if (connectionSettings) doConnect(false);
+        if (loginObject) doLogin(false);
 
-        // *** Events
+        // ═══════════════════════════════════════════════
+        // Events
+        // ═══════════════════════════════════════════════
 
-        // Verbindungseinstellungen > Verbinden
+        // Connection settings button
+        $("#btnConnectionSetting").click(function () {
+          showModal("modalConnectionSettings");
+        });
+        // Login button
+        $("#btnCredentials").click(function () {
+          showModal("modalLogin");
+        });
+
+        // Connect
         $("#btnConnect").click(function () {
           if (
             fieldValidation($("#txtConnSettRestApiUrl"), function (val) {
@@ -905,39 +2131,31 @@
           ) {
             let passwordHash;
             const clearTextPassword = $("#txtConnSettRestApiPwd").val();
-
             if (clearTextPassword) {
-              // If there's a value in the clear text field, hash it
               passwordHash = sha256(clearTextPassword).toString();
             } else {
-              // If the clear text field is empty, use the value from the hash input field
               passwordHash = $("#txtConnSettRestApiPwdHash").val();
             }
-
-            // Validate that we have a password hash
             if (passwordHash) {
               connectionSettings = {
                 url: $("#txtConnSettRestApiUrl").val(),
                 pwd: passwordHash,
               };
               doConnect($("#chkConnSettRemember").val());
-              $("#modalConnectionSettings").modal("hide");
+              hideModal("modalConnectionSettings");
             } else {
-              // Handle the case where no password is provided
-              alert("Please enter a password or provide a password hash.");
+              alert("Bitte Passwort oder Passwort-Hash eingeben.");
             }
           }
         });
 
-        // Gespeicherte Daten löschen
+        // Delete stored data
         $("#btnRemoveSavedData").click(function () {
-          if (localStorage) {
-            localStorage.clear();
-          }
+          if (localStorage) localStorage.clear();
           $(this).addClass("hidden");
         });
 
-        // Logindaten > Login
+        // Login
         $("#btnLogin").click(function () {
           if (
             fieldValidation($("#selDatabase"), function (val) {
@@ -947,34 +2165,25 @@
               return val != "";
             })
           ) {
-            // Instead of reading from checkboxes, always use "VOL"
             var modArr = ["VOL"];
             let passwordHash;
             const clearTextPassword = $("#txtLoginPwd").val();
-
             if (clearTextPassword) {
-              // If there's a value in the clear text field, hash it
               passwordHash = sha256(clearTextPassword).toString();
             } else {
-              // If the clear text field is empty, use the value from the hash input field
               passwordHash = $("#txtLoginPwdHash").val();
             }
-
-            // Validate that we have a password hash
             if (passwordHash) {
               loginObject = {
                 Benutzer: $("#txtLoginUsername").val(),
                 Passwort: passwordHash,
                 Module: modArr,
-                Datenbank: {
-                  Name: $("#selDatabase").val(),
-                },
+                Datenbank: { Name: $("#selDatabase").val() },
               };
               doLogin($("#chkLoginRemember").val());
-              $("#modalLogin").modal("hide");
+              hideModal("modalLogin");
             } else {
-              // Handle the case where no password is provided
-              alert("Please enter a password or provide a password hash.");
+              alert("Bitte Passwort oder Passwort-Hash eingeben.");
             }
           }
         });
@@ -987,29 +2196,80 @@
           $("#lblLoginFailed").addClass("hidden");
           $("#lblLoginTimeout").addClass("hidden");
           $("#lblLoginNot").removeClass("hidden");
+          $("#btnLogout").addClass("hidden");
         });
 
-        // Session abgelaufen > Erneut einloggen
+        // Relogin
         $("#btnRelogin").click(function () {
           doLogin();
         });
 
-        // Log leeren
+        // Clear log
         $("#btnLogClear").click(function () {
           $("#output").empty();
+          $("#output").append(
+            '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Noch keine Requests gesendet</div></div>',
+          );
+          logcounter = 0;
+          updateLogCount();
         });
 
-        // HTTP-Methode wechseln
-        $(".lnkMethod").click(function (event) {
-          event.preventDefault();
-          setHttpMethod($(this).attr("data-httpmethod"));
+        // Method dropdown
+        $("#btnHttpMethod").click(function (e) {
+          e.stopPropagation();
+          var dd = $("#lstHttpMethods");
+          dd.toggleClass("show");
+          $(this).toggleClass("open");
         });
 
-        // Request-Form absenden
+        $(document).click(function () {
+          $("#lstHttpMethods").removeClass("show");
+          $("#btnHttpMethod").removeClass("open");
+        });
+
+        $(".method-option").click(function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          setHttpMethod($(this).attr("data-method"));
+          $("#lstHttpMethods").removeClass("show");
+          $("#btnHttpMethod").removeClass("open");
+        });
+
+        // Log entry expand/collapse
+        $(document).on("click", ".log-header", function () {
+          $(this).closest(".log-entry").toggleClass("expanded");
+        });
+
+        // Log tabs
+        $(document).on("click", ".log-tab", function (e) {
+          e.stopPropagation();
+          var entry = $(this).closest(".log-entry");
+          entry.find(".log-tab").removeClass("active");
+          entry.find(".log-tab-content").removeClass("active");
+          $(this).addClass("active");
+          entry.find("#" + $(this).data("tab")).addClass("active");
+        });
+
+        // Copy button
+        $(document).on("click", ".copy-btn", function (e) {
+          e.stopPropagation();
+          var btn = $(this);
+          var entry = btn.closest(".log-entry");
+          var type = btn.data("copy");
+          var text = entry.data(type) || "";
+
+          navigator.clipboard.writeText(text).then(function () {
+            btn.text("Copied!").addClass("copied");
+            setTimeout(function () {
+              btn.text("Copy").removeClass("copied");
+            }, 1500);
+          });
+        });
+
+        // Submit request form
         $("#requestform").submit(function (event) {
           event.preventDefault();
 
-          // Werte checken
           var endpointValid = fieldValidation(
             $("#txtEndpoint"),
             function (val) {
@@ -1018,42 +2278,41 @@
           );
           var httpbodyValid = true;
           var payload;
-          $("#lblHttpBodyError").remove(); // Allfällige Fehlermeldung vom HTTP Body entfernen
+          $("#lblHttpBodyError").addClass("hidden").text("");
+
           if (
             selectedHttpMethod == "POST" ||
             selectedHttpMethod == "PUT" ||
             selectedHttpMethod == "PATCH"
           ) {
-            httpbodyValid = fieldValidation($("#txtHttpBody"), function (val) {
-              if (val.length && val.length > 0) {
-                try {
-                  payload = JSON.parse(val);
-                } catch (e) {
-                  $("#txtHttpBody").after(
-                    '<span class="help-block" id="lblHttpBodyError">' +
-                      e +
-                      "</span>",
-                  ); // Fehlermeldung einfügen
-                  return false;
-                }
+            var bodyVal = $("#txtHttpBody").val();
+            if (bodyVal && bodyVal.length > 0) {
+              try {
+                payload = JSON.parse(bodyVal);
+              } catch (e) {
+                $("#lblHttpBodyError").text(e.toString()).removeClass("hidden");
+                httpbodyValid = false;
               }
-              return true;
-            });
+            }
           }
 
-          // Darstellung Input Group
-          $("#txtEndpoint")
-            .closest("div.form-group")
-            .removeClass("has-success");
+          if (endpointValid && httpbodyValid) {
+            doApiCall(
+              selectedHttpMethod,
+              $("#txtEndpoint").val(),
+              null,
+              null,
+              payload,
+            );
+          }
+        });
 
-          // Request absenden
-          doApiCall(
-            selectedHttpMethod,
-            $("#txtEndpoint").val(),
-            null,
-            null,
-            payload,
-          );
+        // Ctrl+Enter to send
+        $(document).on("keydown", function (e) {
+          if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            e.preventDefault();
+            $("#requestform").submit();
+          }
         });
 
         // Reset
@@ -1062,12 +2321,12 @@
         });
       });
 
-      // ***********************
-      // *** SHA 256
-      // *** js-sha256 v0.3.0 https://github.com/emn178/js-sha256
-      // *** Copyright 2014-2015, emn178@gmail.com
-      // *** Licensed under the MIT license: http://www.opensource.org/licenses/MIT
-      // ***********************
+      // ═══════════════════════════════════════════════
+      // SHA-256
+      // js-sha256 v0.3.0 https://github.com/emn178/js-sha256
+      // Copyright 2014-2015, emn178@gmail.com
+      // Licensed under the MIT license
+      // ═══════════════════════════════════════════════
       (function (I, R) {
         var K = "undefined" != typeof module;
         K && (I = global);
