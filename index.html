@@ -590,9 +590,6 @@
               class="form-select w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition focus:border-[#5b6aff]"
               id="selDatabase"
             ></select>
-            <div class="form-hint mt-1 text-[0.75rem] text-[#5a5e78]">
-              Log out before switching.
-            </div>
           </div>
           <div class="form-group mb-4 last:mb-0">
             <label
@@ -1238,6 +1235,20 @@
         );
       };
 
+      var isLoginOkVisible = function () {
+        return !$("#lblLoginOk").hasClass("hidden");
+      };
+
+      var updateLoginObjectDatabaseFromSelection = function () {
+        var selectedDatabase = $("#selDatabase").val();
+        if (!selectedDatabase) return;
+        if (!loginObject) return;
+        if (!loginObject.Datenbank) {
+          loginObject.Datenbank = {};
+        }
+        loginObject.Datenbank.Name = selectedDatabase;
+      };
+
       // ═══════════════════════════════════════════════
       // Set HTTP Method
       // ═══════════════════════════════════════════════
@@ -1384,6 +1395,19 @@
           setElementVisibilityById("lblLoginTimeout", false);
           setElementVisibilityById("lblLoginNot", true);
           setElementVisibilityById("btnLogout", false);
+          wasLoggedIn = false;
+        });
+
+        // Switch database
+        $("#selDatabase").on("change", function () {
+          updateLoginObjectDatabaseFromSelection();
+
+          // If currently logged in, switch database by cleanly re-authenticating.
+          if (loginObject && wasLoggedIn && isLoginOkVisible()) {
+            doApiCall("DELETE", "PRO/Login", function () {
+              doLogin();
+            });
+          }
         });
 
         // Relogin
