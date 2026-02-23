@@ -1047,9 +1047,9 @@
             id +
             '">' +
             '<div class="log-code-wrap relative">' +
-            '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] cursor-pointer rounded-md border border-[#2a2d3e] bg-[#232639] px-2.5 py-1 text-[0.72rem] font-medium text-[#8b8fa8] transition hover:border-[#5a5e78] hover:text-[#e4e6f0]" data-copy="response" data-id="' +
+            '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-[#2a2d3e] bg-[#232639] p-0 text-[0.78rem] text-[#8b8fa8] transition hover:border-[#5a5e78] hover:text-[#e4e6f0]" data-copy="response" data-id="' +
             id +
-            '">Copy</button>' +
+            '" title="Copy response" aria-label="Copy response"><i class="bi bi-clipboard text-[12px] leading-none" aria-hidden="true"></i></button>' +
             '<div class="log-code max-h-[400px] overflow-x-auto overflow-y-auto break-words whitespace-pre-wrap px-4 py-3.5 font-mono text-[0.8rem] leading-[1.7] text-[#8b8fa8]">' +
             highlightedResponse +
             "</div>" +
@@ -1059,9 +1059,9 @@
             id +
             '">' +
             '<div class="log-code-wrap relative">' +
-            '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] cursor-pointer rounded-md border border-[#2a2d3e] bg-[#232639] px-2.5 py-1 text-[0.72rem] font-medium text-[#8b8fa8] transition hover:border-[#5a5e78] hover:text-[#e4e6f0]" data-copy="request" data-id="' +
+            '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-[#2a2d3e] bg-[#232639] p-0 text-[0.78rem] text-[#8b8fa8] transition hover:border-[#5a5e78] hover:text-[#e4e6f0]" data-copy="request" data-id="' +
             id +
-            '">Copy</button>' +
+            '" title="Copy request" aria-label="Copy request"><i class="bi bi-clipboard text-[12px] leading-none" aria-hidden="true"></i></button>' +
             '<div class="log-code max-h-[400px] overflow-x-auto overflow-y-auto break-words whitespace-pre-wrap px-4 py-3.5 font-mono text-[0.8rem] leading-[1.7] text-[#8b8fa8]">' +
             highlightedRequest +
             "</div>" +
@@ -1464,9 +1464,15 @@
           var text = entry.data(type) || "";
 
           navigator.clipboard.writeText(text).then(function () {
-            btn.text("Copied!").addClass("copied");
+            var icon = btn.find("i");
+            icon
+              .removeClass("bi-clipboard")
+              .addClass("bi-check2")
+              .attr("aria-hidden", "true");
+            btn.addClass("copied");
             setTimeout(function () {
-              btn.text("Copy").removeClass("copied");
+              icon.removeClass("bi-check2").addClass("bi-clipboard");
+              btn.removeClass("copied");
             }, 1500);
           });
         });
