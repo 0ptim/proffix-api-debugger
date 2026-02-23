@@ -2279,6 +2279,96 @@
           });
         });
 
+        // JSON body editor: keep focus on Tab and indent/outdent
+        $(document).on("keydown", "#txtHttpBody", function (e) {
+          if (e.key !== "Tab" || e.ctrlKey || e.metaKey || e.altKey) return;
+
+          e.preventDefault();
+          var textarea = this;
+          var value = textarea.value;
+          var start = textarea.selectionStart;
+          var end = textarea.selectionEnd;
+          var indent = "  ";
+          var hasSelection = start !== end;
+
+          if (!e.shiftKey) {
+            if (!hasSelection) {
+              textarea.value =
+                value.substring(0, start) + indent + value.substring(end);
+              textarea.selectionStart = textarea.selectionEnd =
+                start + indent.length;
+              return;
+            }
+
+            var indentLineStart = value.lastIndexOf("\n", start - 1) + 1;
+            var indentSelectedText = value.substring(indentLineStart, end);
+            var indentLines = indentSelectedText.split("\n");
+            var indentedText = indentLines
+              .map(function (line) {
+                return indent + line;
+              })
+              .join("\n");
+
+            textarea.value =
+              value.substring(0, indentLineStart) +
+              indentedText +
+              value.substring(end);
+            textarea.selectionStart = start + indent.length;
+            textarea.selectionEnd = end + indent.length * indentLines.length;
+            return;
+          }
+
+          var outdentLineStart = value.lastIndexOf("\n", start - 1) + 1;
+
+          if (!hasSelection) {
+            var currentLineEnd = value.indexOf("\n", start);
+            if (currentLineEnd === -1) currentLineEnd = value.length;
+            var currentLine = value.substring(outdentLineStart, currentLineEnd);
+            var removeCount = 0;
+            if (currentLine.startsWith(indent)) {
+              removeCount = indent.length;
+            } else if (currentLine.startsWith("\t")) {
+              removeCount = 1;
+            }
+            if (removeCount === 0) return;
+
+            textarea.value =
+              value.substring(0, outdentLineStart) +
+              currentLine.substring(removeCount) +
+              value.substring(currentLineEnd);
+            var cursorAdjust = Math.min(removeCount, start - outdentLineStart);
+            var nextPos = start - cursorAdjust;
+            textarea.selectionStart = textarea.selectionEnd = nextPos;
+            return;
+          }
+
+          var outdentSelectedText = value.substring(outdentLineStart, end);
+          var outdentLines = outdentSelectedText.split("\n");
+          var removedFromFirstLine = 0;
+          var totalRemoved = 0;
+          var outdentedText = outdentLines
+            .map(function (line, index) {
+              var removeCount = 0;
+              if (line.startsWith(indent)) {
+                removeCount = indent.length;
+              } else if (line.startsWith("\t")) {
+                removeCount = 1;
+              }
+              if (index === 0) removedFromFirstLine = removeCount;
+              totalRemoved += removeCount;
+              return line.substring(removeCount);
+            })
+            .join("\n");
+
+          textarea.value =
+            value.substring(0, outdentLineStart) +
+            outdentedText +
+            value.substring(end);
+          textarea.selectionStart =
+            start - Math.min(removedFromFirstLine, start - outdentLineStart);
+          textarea.selectionEnd = end - totalRemoved;
+        });
+
         // Submit request form
         $("#requestform").submit(function (event) {
           event.preventDefault();
