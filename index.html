@@ -10,6 +10,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
       @theme {
@@ -139,20 +143,10 @@
           class="header-brand flex items-center gap-2.5 text-[1.1rem] font-bold tracking-[-0.02em] text-[#e4e6f0] no-underline"
           href=""
         >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="3" y="4" width="18" height="16" rx="2" ry="2" />
-            <line x1="7" y1="9" x2="17" y2="9" />
-            <line x1="7" y1="15" x2="12" y2="15" />
-          </svg>
+          <i
+            class="bi bi-window-sidebar text-[18px] leading-none"
+            aria-hidden="true"
+          ></i>
           Proffix API Debugger
         </a>
         <div
@@ -245,20 +239,10 @@
             title="Logout"
             aria-label="Logout"
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+            <i
+              class="bi bi-box-arrow-right text-[14px] leading-none"
+              aria-hidden="true"
+            ></i>
           </button>
         </div>
       </header>
@@ -268,20 +252,10 @@
         class="timeout-banner hidden mb-4 items-center gap-2.5 rounded-[10px] border border-amber-400/20 bg-[rgba(251,191,36,0.08)] px-4 py-2.5 text-[0.85rem] text-amber-400"
         id="lblLoginTimeout"
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
+        <i
+          class="bi bi-exclamation-circle text-[16px] leading-none"
+          aria-hidden="true"
+        ></i>
         Session expired
         <button
           type="button"
@@ -306,19 +280,10 @@
                 data-method="GET"
               >
                 <span class="method-text">GET</span>
-                <svg
-                  class="method-chevron"
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+                <i
+                  class="method-chevron bi bi-chevron-down text-[12px] leading-none"
+                  aria-hidden="true"
+                ></i>
               </button>
               <div
                 class="method-dropdown absolute left-0 top-[calc(100%+4px)] z-[200] min-w-[170px] rounded-[10px] border border-[#2a2d3e] bg-[#232639] p-1 shadow-2xl"
@@ -402,19 +367,10 @@
                 id="iconSend"
                 aria-hidden="true"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="22" y1="2" x2="11" y2="13" />
-                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                </svg>
+                <i
+                  class="bi bi-send-fill text-[14px] leading-none"
+                  aria-hidden="true"
+                ></i>
               </span>
               <span
                 class="sr-only absolute h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 [clip:rect(0,0,0,0)] [-m-px]"
@@ -456,21 +412,10 @@
           class="btn btn-ghost btn-sm inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-transparent bg-transparent px-2.5 py-[5px] text-[0.78rem] leading-[1.4] font-medium text-[#8b8fa8] transition duration-150 hover:bg-[#1c1f2e] hover:text-[#e4e6f0] active:scale-95"
           id="btnLogClear"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="3 6 5 6 21 6" />
-            <path
-              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-            />
-          </svg>
+          <i
+            class="bi bi-trash3 text-[13px] leading-none"
+            aria-hidden="true"
+          ></i>
           Clear
         </button>
       </div>
@@ -480,21 +425,10 @@
           class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]"
           id="logEmpty"
         >
-          <svg
-            class="mb-3 opacity-30"
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
+          <i
+            class="bi bi-inbox mb-3 block text-[40px] leading-none opacity-30"
+            aria-hidden="true"
+          ></i>
           <div>No requests sent yet</div>
         </div>
       </div>
@@ -521,19 +455,10 @@
             class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
             data-dismiss="modal"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <i
+              class="bi bi-x-lg text-[16px] leading-none"
+              aria-hidden="true"
+            ></i>
           </button>
         </div>
         <div class="modal-body p-[22px]">
@@ -595,21 +520,10 @@
             class="btn btn-primary inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#5b6aff] bg-[#5b6aff] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-white transition duration-150 hover:border-[#4a58e0] hover:bg-[#4a58e0] active:scale-95"
             id="btnConnect"
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-              />
-              <polyline points="22,6 12,13 2,6" />
-            </svg>
+            <i
+              class="bi bi-plug text-[13px] leading-none"
+              aria-hidden="true"
+            ></i>
             Connect
           </button>
         </div>
@@ -633,19 +547,10 @@
             class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
             data-dismiss="modal"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+            <i
+              class="bi bi-x-lg text-[16px] leading-none"
+              aria-hidden="true"
+            ></i>
           </button>
         </div>
         <div class="modal-body p-[22px]">
@@ -717,20 +622,10 @@
             class="btn btn-primary inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#5b6aff] bg-[#5b6aff] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-white transition duration-150 hover:border-[#4a58e0] hover:bg-[#4a58e0] active:scale-95"
             id="btnLogin"
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-              <polyline points="10 17 15 12 10 7" />
-              <line x1="15" y1="12" x2="3" y2="12" />
-            </svg>
+            <i
+              class="bi bi-box-arrow-in-right text-[13px] leading-none"
+              aria-hidden="true"
+            ></i>
             Login
           </button>
         </div>
@@ -896,7 +791,7 @@
           $("#iconSend").html('<span class="spinner"></span>');
         } else {
           $("#iconSend").html(
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+            '<i class="bi bi-send-fill text-[14px] leading-none" aria-hidden="true"></i>',
           );
         }
       };
@@ -1077,8 +972,8 @@
             '<span class="log-time text-[0.72rem] text-[#5a5e78]">' +
             timeStr +
             "</span>" +
-            '<button type="button" class="log-delete-btn inline-flex h-5 w-5 items-center justify-center rounded bg-transparent text-[#5a5e78] transition hover:bg-rose-400/12 hover:text-rose-400" title="Delete entry" aria-label="Delete entry"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
-            '<svg class="log-chevron shrink-0 text-[#5a5e78]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+            '<button type="button" class="log-delete-btn inline-flex h-5 w-5 items-center justify-center rounded bg-transparent text-[#5a5e78] transition hover:bg-rose-400/12 hover:text-rose-400" title="Delete entry" aria-label="Delete entry"><i class="bi bi-x-lg text-[11px] leading-none" aria-hidden="true"></i></button>' +
+            '<i class="log-chevron bi bi-chevron-down shrink-0 text-[#5a5e78] text-[12px] leading-none" aria-hidden="true"></i>' +
             "</div>" +
             "</div>" +
             '<div class="log-body border-t border-[#2a2d3e]">' +
@@ -1446,7 +1341,7 @@
         $("#btnLogClear").click(function () {
           $("#output").empty();
           $("#output").append(
-            '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><svg class="mb-3 opacity-30" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
+            '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><i class="bi bi-inbox mb-3 block text-[40px] leading-none opacity-30" aria-hidden="true"></i><div>No requests sent yet</div></div>',
           );
           logcounter = 0;
           updateLogCount();
@@ -1488,7 +1383,7 @@
               empty.removeClass("hidden");
             } else {
               $("#output").append(
-                '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><svg class="mb-3 opacity-30" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
+                '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><i class="bi bi-inbox mb-3 block text-[40px] leading-none opacity-30" aria-hidden="true"></i><div>No requests sent yet</div></div>',
               );
             }
           }
