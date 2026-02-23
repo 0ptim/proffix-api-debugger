@@ -1779,6 +1779,7 @@
               "</span>"
             : "";
         var responseTabLabel = "Response" + arrayCountBadge;
+        var endpointDisplay = getEndpointDisplay(endpoint);
 
         var entry = $(
           '<div class="log-entry ' +
@@ -1793,7 +1794,7 @@
             method +
             "</span>" +
             '<span class="log-endpoint">' +
-            escapeHtml(endpoint) +
+            escapeHtml(endpointDisplay) +
             "</span>" +
             '<div class="log-meta">' +
             '<span class="log-status ' +
@@ -1885,6 +1886,42 @@
           return new URL(url).host;
         } catch (e) {
           return url.replace(/^[a-z]+:\/\//i, "").split("/")[0];
+        }
+      }
+
+      function getEndpointDisplay(endpoint) {
+        if (!endpoint) return "";
+
+        var value = String(endpoint);
+        var hashIndex = value.indexOf("#");
+        var hash = hashIndex >= 0 ? value.substring(hashIndex) : "";
+        var noHash = hashIndex >= 0 ? value.substring(0, hashIndex) : value;
+
+        var queryIndex = noHash.indexOf("?");
+        if (queryIndex < 0) return value;
+
+        var path = noHash.substring(0, queryIndex);
+        var query = noHash.substring(queryIndex + 1);
+
+        try {
+          var params = new URLSearchParams(query);
+          var filtered = new URLSearchParams();
+
+          params.forEach(function (paramValue, paramName) {
+            if (String(paramName).toLowerCase() !== "key") {
+              filtered.append(paramName, paramValue);
+            }
+          });
+
+          var filteredQuery = filtered.toString();
+          return path + (filteredQuery ? "?" + filteredQuery : "") + hash;
+        } catch (e) {
+          return (
+            noHash
+              .replace(/([?&])key=[^&#]*&?/gi, "$1")
+              .replace(/[?&]$/, "")
+              .replace("?&", "?") + hash
+          );
         }
       }
 
