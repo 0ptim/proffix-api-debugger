@@ -944,6 +944,9 @@
         var entryClass = isSuccess
           ? "border-l-[3px] border-l-emerald-400"
           : "border-l-[3px] border-l-rose-400";
+        var hoverLeftClass = isSuccess
+          ? "hover:border-l-emerald-400"
+          : "hover:border-l-rose-400";
         var methodBadgeClass = getMethodBadgeClass(method);
         var now = new Date();
         var timeStr = now.toLocaleTimeString("en-CH", {
@@ -993,6 +996,8 @@
         var entry = $(
           '<div class="log-entry ' +
             "mb-2.5 overflow-hidden rounded-[10px] border border-[#2a2d3e] bg-[#161822] transition duration-150 hover:border-[#5a5e78] " +
+            hoverLeftClass +
+            " " +
             entryClass +
             ' expanded" data-id="' +
             id +
