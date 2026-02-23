@@ -67,6 +67,8 @@
       html {
         font-size: 15px;
         -webkit-font-smoothing: antialiased;
+        overflow-y: scroll;
+        scrollbar-gutter: stable;
       }
 
       body {
@@ -672,6 +674,25 @@
       .log-time {
         font-size: 0.72rem;
         color: var(--text-muted);
+      }
+
+      .log-delete-btn {
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border: none;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+      .log-delete-btn:hover {
+        color: var(--danger);
+        background: rgba(248, 113, 113, 0.12);
       }
 
       .log-chevron {
@@ -1855,6 +1876,7 @@
             '<span class="log-time">' +
             timeStr +
             "</span>" +
+            '<button type="button" class="log-delete-btn" title="Eintrag löschen" aria-label="Eintrag löschen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
             '<svg class="log-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
             "</div>" +
             "</div>" +
@@ -2263,6 +2285,23 @@
         // Log entry expand/collapse
         $(document).on("click", ".log-header", function () {
           $(this).closest(".log-entry").toggleClass("expanded");
+        });
+
+        // Delete single log entry
+        $(document).on("click", ".log-delete-btn", function (e) {
+          e.stopPropagation();
+          $(this).closest(".log-entry").remove();
+          if ($("#output .log-entry").length === 0) {
+            var empty = $("#logEmpty");
+            if (empty.length > 0) {
+              empty.removeClass("hidden");
+            } else {
+              $("#output").append(
+                '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Noch keine Requests gesendet</div></div>',
+              );
+            }
+          }
+          updateLogCount();
         });
 
         // Log tabs
