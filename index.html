@@ -107,6 +107,36 @@
         color: #34d399;
       }
 
+      .log-code {
+        font-family:
+          "Berkeley Mono", "JetBrains Mono", "Cascadia Code", "Fira Code",
+          "Consolas", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      }
+
+      .log-json-lines {
+        margin: 0;
+        display: grid;
+        gap: 0;
+      }
+
+      .log-json-line {
+        display: grid;
+        grid-template-columns: 3ch minmax(0, 1fr);
+        column-gap: 14px;
+      }
+
+      .log-json-lno {
+        user-select: none;
+        text-align: right;
+        color: rgba(139, 143, 168, 0.45);
+        font-size: 0.76rem;
+      }
+
+      .log-json-code {
+        min-width: 0;
+        color: #9aa0bc;
+      }
+
       .form-group.has-success .form-input,
       .form-group.has-success .form-select {
         border-color: #34d399;
@@ -840,6 +870,29 @@
         );
       }
 
+      function renderWithLineNumbers(rendered) {
+        var value = rendered || "";
+        var lines = String(value).split("\n");
+        return (
+          '<div class="log-json-lines">' +
+          lines
+            .map(function (line, index) {
+              return (
+                '<div class="log-json-line">' +
+                '<span class="log-json-lno">' +
+                (index + 1) +
+                "</span>" +
+                '<span class="log-json-code">' +
+                (line.length ? line : "&nbsp;") +
+                "</span>" +
+                "</div>"
+              );
+            })
+            .join("") +
+          "</div>"
+        );
+      }
+
       function getMethodColorClass(method) {
         var methodColors = {
           GET: "text-emerald-400",
@@ -921,10 +974,10 @@
 
         var id = "log-" + logcounter;
         var highlightedResponse = response
-          ? syntaxHighlight(response)
+          ? renderWithLineNumbers(syntaxHighlight(response))
           : '<span style="color:#8b8fa8">— leer —</span>';
         var highlightedRequest = request
-          ? syntaxHighlight(request)
+          ? renderWithLineNumbers(syntaxHighlight(request))
           : '<span style="color:#8b8fa8">— leer —</span>';
         var arrayCountBadge =
           typeof responseArrayCount === "number"
