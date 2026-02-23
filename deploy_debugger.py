@@ -43,13 +43,17 @@ def candidate_assemblies_dirs(explicit: Iterable[Path]) -> List[Path]:
     candidates: List[Path] = list(explicit)
 
     if os.name == "nt":
-        program_files = os.environ.get("ProgramFiles")
-        if program_files:
-            candidates.append(
-                Path(program_files)
-                / "Proffix REST API"
-                / "Proffix REST API"
-                / "Assemblies"
+        for env_name in ("ProgramFiles", "ProgramW6432", "ProgramFiles(x86)"):
+            program_files = os.environ.get(env_name)
+            if not program_files:
+                continue
+
+            root = Path(program_files)
+            candidates.extend(
+                [
+                    root / "Proffix REST API" / "Proffix REST API" / "Assemblies",
+                    root / "Proffix Server-Manager" / "PROFFIX REST API",
+                ]
             )
     elif sys.platform == "darwin":
         candidates.extend(
@@ -74,11 +78,12 @@ def candidate_assemblies_dirs(explicit: Iterable[Path]) -> List[Path]:
     seen = set()
     for path in candidates:
         resolved = path.expanduser().resolve()
-        key = os.path.normcase(str(resolved))
-        if key in seen or not resolved.is_dir():
-            continue
-        seen.add(key)
-        existing.append(resolved)
+        for probe in (resolved, resolved / "Assemblies"):
+            key = os.path.normcase(str(probe))
+            if key in seen or not probe.is_dir():
+                continue
+            seen.add(key)
+            existing.append(probe)
     return existing
 
 
