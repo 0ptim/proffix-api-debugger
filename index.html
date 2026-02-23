@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1111,14 +1111,14 @@
           <!-- Connection states -->
           <div class="status-pill status-pill-btn" id="lblConnectionNot">
             <span class="dot red"></span>
-            Nicht verbunden
+            Not connected
           </div>
           <div
             class="status-pill status-pill-btn hidden"
             id="lblConnectionInProgress"
           >
             <span class="dot yellow pulse"></span>
-            Verbinden...
+            Connecting...
           </div>
           <div class="status-pill status-pill-btn hidden" id="lblConnectionOk">
             <span class="dot green"></span>
@@ -1132,20 +1132,20 @@
             id="lblConnectionFailed"
           >
             <span class="dot red"></span>
-            Verbindungsfehler
+            Connection failed
           </div>
 
           <!-- Login states -->
           <div class="status-pill status-pill-btn hidden" id="lblLoginNot">
             <span class="dot red"></span>
-            Nicht eingeloggt
+            Not logged in
           </div>
           <div
             class="status-pill status-pill-btn hidden"
             id="lblLoginInProgress"
           >
             <span class="dot yellow pulse"></span>
-            Login...
+            Logging in...
           </div>
           <div class="status-pill status-pill-btn hidden" id="lblLoginOk">
             <span class="dot green"></span>
@@ -1153,7 +1153,7 @@
           </div>
           <div class="status-pill status-pill-btn hidden" id="lblLoginFailed">
             <span class="dot red"></span>
-            Login fehlgeschlagen
+            Login failed
           </div>
         </div>
         <div class="header-actions">
@@ -1198,9 +1198,9 @@
           <line x1="12" y1="8" x2="12" y2="12" />
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
-        Session abgelaufen
+        Session expired
         <button type="button" class="btn btn-sm" id="btnRelogin">
-          Erneut einloggen
+          Log in again
         </button>
       </div>
 
@@ -1232,19 +1232,19 @@
               <div class="method-dropdown" id="lstHttpMethods">
                 <button type="button" class="method-option" data-method="GET">
                   <span class="method-name">GET</span
-                  ><span class="method-label">abrufen</span>
+                  ><span class="method-label">fetch</span>
                 </button>
                 <button type="button" class="method-option" data-method="POST">
                   <span class="method-name">POST</span
-                  ><span class="method-label">anlegen</span>
+                  ><span class="method-label">create</span>
                 </button>
                 <button type="button" class="method-option" data-method="PUT">
                   <span class="method-name">PUT</span
-                  ><span class="method-label">überschreiben</span>
+                  ><span class="method-label">replace</span>
                 </button>
                 <button type="button" class="method-option" data-method="PATCH">
                   <span class="method-name">PATCH</span
-                  ><span class="method-label">aktualisieren</span>
+                  ><span class="method-label">update</span>
                 </button>
                 <button
                   type="button"
@@ -1252,7 +1252,7 @@
                   data-method="DELETE"
                 >
                   <span class="method-name">DELETE</span
-                  ><span class="method-label">löschen</span>
+                  ><span class="method-label">delete</span>
                 </button>
               </div>
             </div>
@@ -1260,7 +1260,7 @@
               type="text"
               class="endpoint-input"
               id="txtEndpoint"
-              placeholder="z.B. ADR/Adresse/1"
+              placeholder="e.g. ADR/Address/1"
               autocomplete="off"
               spellcheck="false"
             />
@@ -1269,8 +1269,8 @@
               class="send-btn"
               id="btnSend"
               disabled
-              aria-label="Senden (Ctrl+Enter)"
-              title="Senden (Ctrl+Enter)"
+              aria-label="Send (Ctrl+Enter)"
+              title="Send (Ctrl+Enter)"
             >
               <span class="icon-wrap" id="iconSend" aria-hidden="true">
                 <svg
@@ -1287,7 +1287,7 @@
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>
               </span>
-              <span class="sr-only">Senden</span>
+              <span class="sr-only">Send</span>
               <span class="shortcut">Ctrl+↵</span>
             </button>
           </div>
@@ -1325,7 +1325,7 @@
               d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
             />
           </svg>
-          Leeren
+          Clear
         </button>
       </div>
 
@@ -1345,7 +1345,7 @@
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
-          <div>Noch keine Requests gesendet</div>
+          <div>No requests sent yet</div>
         </div>
       </div>
 
@@ -1356,7 +1356,7 @@
     <div class="modal-overlay" id="modalConnectionSettings">
       <div class="modal">
         <div class="modal-header">
-          <h3 class="modal-title">Verbindungseinstellungen</h3>
+          <h3 class="modal-title">Connection settings</h3>
           <button type="button" class="modal-close" data-dismiss="modal">
             <svg
               width="18"
@@ -1385,42 +1385,40 @@
               placeholder="https://remote.proffix.net:11011/pxapi/v4"
             />
             <div class="form-hint">
-              z.B. https://remote.proffix.net:11011/pxapi/v4
+              e.g. https://remote.proffix.net:11011/pxapi/v4
             </div>
           </div>
           <div class="form-group">
             <label class="form-label" for="txtConnSettRestApiPwd"
-              >Passwort (Klartext)</label
+              >Password (plain text)</label
             >
             <input
               type="password"
               class="form-input"
               id="txtConnSettRestApiPwd"
-              placeholder="Wird automatisch gehasht"
+              placeholder="Will be hashed automatically"
             />
           </div>
           <div class="form-group">
             <label class="form-label" for="txtConnSettRestApiPwdHash"
-              >Passwort (SHA-256 Hash)</label
+              >Password (SHA-256 hash)</label
             >
             <input
               type="password"
               class="form-input"
               id="txtConnSettRestApiPwdHash"
-              placeholder="Alternativ: bereits gehashtes Passwort"
+              placeholder="Alternative: already hashed password"
             />
           </div>
           <div class="form-group">
             <label class="form-check">
               <input type="checkbox" id="chkConnSettRemember" />
-              Im Local Storage speichern
+              Save to local storage
             </label>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" data-dismiss="modal">
-            Abbrechen
-          </button>
+          <button type="button" class="btn" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" id="btnConnect">
             <svg
               width="14"
@@ -1437,7 +1435,7 @@
               />
               <polyline points="22,6 12,13 2,6" />
             </svg>
-            Verbinden
+            Connect
           </button>
         </div>
       </div>
@@ -1466,14 +1464,12 @@
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <label class="form-label" for="selDatabase">Datenbank</label>
+            <label class="form-label" for="selDatabase">Database</label>
             <select class="form-select" id="selDatabase"></select>
-            <div class="form-hint">Vor einem Wechsel zuerst ausloggen.</div>
+            <div class="form-hint">Log out before switching.</div>
           </div>
           <div class="form-group">
-            <label class="form-label" for="txtLoginUsername"
-              >Benutzername</label
-            >
+            <label class="form-label" for="txtLoginUsername">Username</label>
             <input
               type="text"
               class="form-input"
@@ -1483,7 +1479,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="txtLoginPwd"
-              >Passwort (Klartext)</label
+              >Password (plain text)</label
             >
             <input
               type="password"
@@ -1494,21 +1490,19 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="txtLoginPwdHash"
-              >Passwort (SHA-256 Hash)</label
+              >Password (SHA-256 hash)</label
             >
             <input type="password" class="form-input" id="txtLoginPwdHash" />
           </div>
           <div class="form-group">
             <label class="form-check">
               <input type="checkbox" id="chkLoginRemember" />
-              Im Local Storage speichern
+              Save to local storage
             </label>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" data-dismiss="modal">
-            Abbrechen
-          </button>
+          <button type="button" class="btn" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary" id="btnLogin">
             <svg
               width="14"
@@ -1729,7 +1723,7 @@
         var statusClass = isSuccess ? "ok" : "err";
         var entryClass = isSuccess ? "success" : "error";
         var now = new Date();
-        var timeStr = now.toLocaleTimeString("de-CH", {
+        var timeStr = now.toLocaleTimeString("en-CH", {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
@@ -1792,7 +1786,7 @@
             '<span class="log-time">' +
             timeStr +
             "</span>" +
-            '<button type="button" class="log-delete-btn" title="Eintrag löschen" aria-label="Eintrag löschen"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+            '<button type="button" class="log-delete-btn" title="Delete entry" aria-label="Delete entry"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
             '<svg class="log-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
             "</div>" +
             "</div>" +
@@ -1905,7 +1899,7 @@
             $("#selDatabase option").remove();
             $("#selDatabase")
               .attr("disabled", "disabled")
-              .append("<option>Keine Datenbanken gefunden</option>");
+              .append("<option>No databases found</option>");
             doApiCall(
               "GET",
               "PRO/Datenbank?key=" + connectionSettings.pwd,
@@ -2100,7 +2094,7 @@
               doConnect($("#chkConnSettRemember").val());
               hideModal("modalConnectionSettings");
             } else {
-              alert("Bitte Passwort oder Passwort-Hash eingeben.");
+              alert("Please enter a password or password hash.");
             }
           }
         });
@@ -2133,7 +2127,7 @@
               doLogin($("#chkLoginRemember").val());
               hideModal("modalLogin");
             } else {
-              alert("Bitte Passwort oder Passwort-Hash eingeben.");
+              alert("Please enter a password or password hash.");
             }
           }
         });
@@ -2158,7 +2152,7 @@
         $("#btnLogClear").click(function () {
           $("#output").empty();
           $("#output").append(
-            '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Noch keine Requests gesendet</div></div>',
+            '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
           );
           logcounter = 0;
           updateLogCount();
@@ -2200,7 +2194,7 @@
               empty.removeClass("hidden");
             } else {
               $("#output").append(
-                '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Noch keine Requests gesendet</div></div>',
+                '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
               );
             }
           }
