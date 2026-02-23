@@ -18,410 +18,6 @@
           "JetBrains Mono", "Fira Code", "Consolas", ui-monospace, monospace;
       }
 
-      @layer base {
-        html {
-          @apply overflow-y-scroll text-[15px] antialiased;
-          scrollbar-gutter: stable;
-        }
-
-        body {
-          @apply min-h-screen bg-[#0f1117] font-sans leading-relaxed text-[#e4e6f0];
-        }
-      }
-
-      @layer components {
-        .hidden {
-          display: none !important;
-        }
-
-        .app {
-          @apply mx-auto max-w-[960px] px-5;
-        }
-
-        .header {
-          @apply sticky top-0 z-[100] mb-6 flex items-center justify-between border-b border-[#2a2d3e] bg-[#0f1117] py-4;
-        }
-
-        .header-brand {
-          @apply flex items-center gap-2.5 text-[1.1rem] font-bold tracking-[-0.02em] text-[#e4e6f0] no-underline;
-        }
-
-        .header-actions {
-          @apply flex shrink-0 items-center gap-2;
-        }
-
-        .status-bar {
-          @apply ml-auto mr-2 flex min-w-0 flex-nowrap items-center gap-3 overflow-x-auto;
-        }
-
-        .status-pill {
-          @apply inline-flex shrink-0 items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium;
-          transition: all 150ms ease;
-        }
-
-        .status-pill-btn {
-          @apply cursor-pointer select-none hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)];
-        }
-
-        .dot {
-          @apply h-[7px] w-[7px] shrink-0 rounded-full;
-        }
-        .dot.red {
-          @apply bg-[#f87171] shadow-[0_0_6px_#f87171];
-        }
-        .dot.green {
-          @apply bg-[#34d399] shadow-[0_0_6px_#34d399];
-        }
-        .dot.yellow {
-          @apply bg-[#fbbf24] shadow-[0_0_6px_#fbbf24];
-        }
-
-        .btn {
-          @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#2a2d3e] bg-[#161822] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-[#e4e6f0] no-underline transition duration-150 hover:border-[#5a5e78] hover:bg-[#1c1f2e] active:scale-95 disabled:pointer-events-none disabled:opacity-40;
-        }
-
-        .btn-primary {
-          @apply border-[#5b6aff] bg-[#5b6aff] text-white hover:border-[#4a58e0] hover:bg-[#4a58e0];
-        }
-
-        .btn-ghost {
-          @apply border-transparent bg-transparent text-[#8b8fa8] hover:bg-[#1c1f2e] hover:text-[#e4e6f0];
-        }
-
-        .btn-sm {
-          @apply px-2.5 py-[5px] text-[0.78rem];
-        }
-
-        .btn-icon {
-          @apply inline-flex items-center justify-center rounded-md bg-transparent p-1.5 text-[#8b8fa8] transition duration-150 hover:bg-[#1c1f2e] hover:text-[#e4e6f0];
-        }
-
-        .header-actions .btn-icon {
-          @apply h-[30px] w-[30px] border border-[#2a2d3e] bg-[#161822] hover:border-[rgba(248,113,113,0.2)] hover:bg-[rgba(248,113,113,0.08)] hover:text-[#f87171];
-        }
-
-        .request-builder {
-          @apply mb-6 rounded-[14px] border border-[#2a2d3e] bg-[#161822] p-1;
-        }
-
-        .request-row {
-          @apply flex items-center;
-        }
-
-        .method-selector {
-          @apply relative;
-        }
-
-        .method-btn {
-          @apply flex items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-transparent px-3.5 py-2.5 font-mono text-[0.85rem] font-semibold tracking-[0.02em] transition duration-150 hover:bg-[#1c1f2e];
-        }
-        .method-btn[data-method="GET"] {
-          @apply text-emerald-400;
-        }
-        .method-btn[data-method="POST"] {
-          @apply text-amber-400;
-        }
-        .method-btn[data-method="PUT"] {
-          @apply text-orange-400;
-        }
-        .method-btn[data-method="PATCH"] {
-          @apply text-violet-400;
-        }
-        .method-btn[data-method="DELETE"] {
-          @apply text-rose-400;
-        }
-        .method-btn.open svg {
-          @apply rotate-180;
-          transition: transform 150ms ease;
-        }
-
-        .method-dropdown {
-          @apply absolute left-0 top-[calc(100%+4px)] z-[200] hidden min-w-[170px] rounded-[10px] border border-[#2a2d3e] bg-[#232639] p-1 shadow-2xl;
-        }
-        .method-dropdown.show {
-          @apply block;
-        }
-
-        .method-option {
-          @apply flex w-full items-center gap-2.5 rounded-md bg-transparent px-3 py-2 text-left font-mono text-[0.85rem] font-medium text-[#e4e6f0] transition hover:bg-[#1c1f2e];
-        }
-        .method-option .method-label {
-          @apply ml-auto font-sans text-[0.78rem] font-normal text-[#5a5e78];
-        }
-        .method-option[data-method="GET"] .method-name {
-          @apply text-emerald-400;
-        }
-        .method-option[data-method="POST"] .method-name {
-          @apply text-amber-400;
-        }
-        .method-option[data-method="PUT"] .method-name {
-          @apply text-orange-400;
-        }
-        .method-option[data-method="PATCH"] .method-name {
-          @apply text-violet-400;
-        }
-        .method-option[data-method="DELETE"] .method-name {
-          @apply text-rose-400;
-        }
-
-        .endpoint-input {
-          @apply min-w-0 flex-1 border-none bg-transparent px-3 py-2.5 font-mono text-[0.9rem] text-[#e4e6f0] outline-none placeholder:text-[#5a5e78];
-        }
-
-        .send-btn {
-          @apply relative m-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border-none bg-[#5b6aff] p-0 text-white transition duration-150 hover:bg-[#4a58e0] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40;
-          font-size: 0;
-          line-height: 1;
-        }
-
-        .send-btn .icon-wrap {
-          @apply inline-flex h-4 w-4 items-center justify-center;
-        }
-
-        .send-btn .shortcut {
-          @apply hidden;
-        }
-
-        .send-btn .sr-only {
-          @apply absolute h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 [clip:rect(0,0,0,0)];
-          margin: -1px;
-        }
-
-        .body-editor {
-          @apply hidden px-1 pt-2 pb-1;
-        }
-        .body-editor.show {
-          @apply block;
-        }
-
-        .body-textarea {
-          @apply min-h-[180px] w-full resize-y rounded-[10px] border border-[#2a2d3e] bg-[#1a1d2e] p-3.5 font-mono text-[0.85rem] leading-relaxed text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff];
-        }
-
-        .body-error {
-          @apply px-2 pt-1.5 text-[0.8rem] text-[#f87171];
-        }
-
-        .section-header {
-          @apply mb-4 flex items-center justify-between;
-        }
-
-        .section-title {
-          @apply text-[0.8rem] font-semibold tracking-[0.08em] text-[#5a5e78] uppercase;
-        }
-
-        .log-count {
-          @apply ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#1c1f2e] px-1.5 text-[0.72rem] font-semibold text-[#8b8fa8];
-        }
-
-        .log-entry {
-          @apply mb-2.5 overflow-hidden rounded-[10px] border border-[#2a2d3e] bg-[#161822] transition duration-150 hover:border-[#5a5e78];
-        }
-        .log-entry.success {
-          @apply border-l-[3px] border-l-emerald-400;
-        }
-        .log-entry.error {
-          @apply border-l-[3px] border-l-rose-400;
-        }
-
-        .log-header {
-          @apply flex cursor-pointer select-none items-center gap-2.5 px-4 py-3;
-        }
-
-        .log-method {
-          @apply rounded px-2 py-0.5 font-mono text-[0.78rem] font-bold tracking-[0.03em];
-        }
-        .log-method.GET {
-          @apply bg-emerald-400/10 text-emerald-400;
-        }
-        .log-method.POST {
-          @apply bg-amber-400/10 text-amber-400;
-        }
-        .log-method.PUT {
-          @apply bg-orange-400/10 text-orange-400;
-        }
-        .log-method.PATCH {
-          @apply bg-violet-400/10 text-violet-400;
-        }
-        .log-method.DELETE {
-          @apply bg-rose-400/10 text-rose-400;
-        }
-
-        .log-endpoint {
-          @apply min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-mono text-[0.85rem] text-[#e4e6f0];
-        }
-
-        .log-meta {
-          @apply flex shrink-0 items-center gap-3;
-        }
-
-        .log-status {
-          @apply rounded px-2 py-0.5 font-mono text-[0.78rem] font-semibold;
-        }
-        .log-status.ok {
-          @apply bg-emerald-400/10 text-emerald-400;
-        }
-        .log-status.err {
-          @apply bg-rose-400/10 text-rose-400;
-        }
-
-        .log-tab-count {
-          @apply ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-sky-400/25 bg-sky-400/12 px-1.5 align-middle font-mono text-[0.68rem] leading-none font-semibold text-sky-400;
-        }
-
-        .log-duration {
-          @apply min-w-[50px] text-right font-mono text-[0.75rem] text-[#5a5e78];
-        }
-
-        .log-time {
-          @apply text-[0.72rem] text-[#5a5e78];
-        }
-
-        .log-delete-btn {
-          @apply inline-flex h-5 w-5 items-center justify-center rounded bg-transparent text-[#5a5e78] transition hover:bg-rose-400/12 hover:text-rose-400;
-        }
-
-        .log-chevron {
-          @apply shrink-0 text-[#5a5e78];
-          transition: transform 150ms ease;
-        }
-
-        .log-entry.expanded .log-chevron {
-          @apply rotate-180;
-        }
-
-        .log-body {
-          @apply hidden border-t border-[#2a2d3e];
-        }
-        .log-entry.expanded .log-body {
-          @apply block;
-        }
-
-        .log-tabs {
-          @apply flex border-b border-[#2a2d3e];
-        }
-
-        .log-tab {
-          @apply cursor-pointer border-b-2 border-transparent bg-transparent px-4 py-2 text-[0.8rem] font-medium text-[#5a5e78] transition hover:text-[#8b8fa8];
-        }
-
-        .log-tab.active {
-          @apply border-b-[#5b6aff] text-[#5b6aff];
-        }
-
-        .log-tab-content {
-          @apply hidden;
-        }
-        .log-tab-content.active {
-          @apply block;
-        }
-
-        .log-code-wrap {
-          @apply relative;
-        }
-
-        .log-code {
-          @apply max-h-[400px] overflow-x-auto overflow-y-auto break-words whitespace-pre-wrap px-4 py-3.5 font-mono text-[0.8rem] leading-[1.7] text-[#8b8fa8];
-        }
-
-        .copy-btn {
-          @apply absolute top-2 right-2 z-[5] cursor-pointer rounded-md border border-[#2a2d3e] bg-[#232639] px-2.5 py-1 font-sans text-[0.72rem] font-medium text-[#8b8fa8] transition hover:border-[#5a5e78] hover:text-[#e4e6f0];
-        }
-        .copy-btn.copied {
-          @apply border-emerald-400/20 text-emerald-400;
-        }
-
-        .log-location {
-          @apply border-b border-[#2a2d3e] px-4 py-2.5 text-[0.8rem];
-        }
-
-        .log-location a {
-          @apply text-[#5b6aff] no-underline hover:underline;
-        }
-
-        .log-empty {
-          @apply px-5 py-12 text-center text-[0.9rem] text-[#5a5e78];
-        }
-        .log-empty svg {
-          @apply mb-3 opacity-30;
-        }
-
-        .modal-overlay {
-          @apply fixed inset-0 z-[1000] hidden items-center justify-center bg-black/60 p-5;
-          backdrop-filter: blur(4px);
-        }
-
-        .modal-overlay.show {
-          @apply flex;
-        }
-
-        .modal {
-          @apply w-full max-w-[480px] rounded-[14px] border border-[#2a2d3e] bg-[#161822] shadow-2xl;
-          animation: modal-in 200ms ease;
-        }
-
-        .modal-header {
-          @apply flex items-center justify-between border-b border-[#2a2d3e] px-[22px] py-[18px];
-        }
-
-        .modal-title {
-          @apply text-base font-semibold;
-        }
-
-        .modal-close {
-          @apply flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0];
-        }
-
-        .modal-body {
-          @apply p-[22px];
-        }
-
-        .modal-footer {
-          @apply flex items-center justify-end gap-2 border-t border-[#2a2d3e] px-[22px] py-4;
-        }
-
-        .form-group {
-          @apply mb-4;
-        }
-        .form-group:last-child {
-          @apply mb-0;
-        }
-
-        .form-label {
-          @apply mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8];
-        }
-
-        .form-input,
-        .form-select {
-          @apply w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff];
-        }
-
-        .form-select {
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235a5e78' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 12px center;
-          padding-right: 32px;
-        }
-
-        .form-select option {
-          @apply bg-[#232639] text-[#e4e6f0];
-        }
-
-        .form-hint {
-          @apply mt-1 text-[0.75rem] text-[#5a5e78];
-        }
-
-        .form-group.has-success .form-input,
-        .form-group.has-success .form-select {
-          @apply border-emerald-400;
-        }
-
-        .timeout-banner {
-          @apply mb-4 flex items-center gap-2.5 rounded-[10px] border border-amber-400/20 bg-[rgba(251,191,36,0.08)] px-4 py-2.5 text-[0.85rem] text-amber-400;
-        }
-      }
-
       @keyframes pulse-dot {
         0%,
         100% {
@@ -432,7 +28,7 @@
         }
       }
 
-      .status-pill .dot.pulse {
+      .dot.pulse {
         animation: pulse-dot 1.2s ease-in-out infinite;
       }
 
@@ -442,7 +38,7 @@
         }
       }
 
-      .send-btn .spinner {
+      .spinner {
         width: 16px;
         height: 16px;
         border: 2.5px solid rgba(255, 255, 255, 0.45);
@@ -464,6 +60,54 @@
         }
       }
 
+      .method-dropdown,
+      .body-editor,
+      .modal-overlay,
+      .log-body,
+      .log-tab-content {
+        display: none;
+      }
+
+      .method-dropdown.show,
+      .body-editor.show,
+      .modal-overlay.show,
+      .log-tab-content.active {
+        display: block;
+      }
+
+      .modal-overlay.show {
+        display: flex;
+      }
+
+      .log-entry.expanded .log-body {
+        display: block;
+      }
+
+      .method-btn .method-chevron,
+      .log-chevron {
+        transition: transform 150ms ease;
+      }
+
+      .method-btn.open .method-chevron,
+      .log-entry.expanded .log-chevron {
+        transform: rotate(180deg);
+      }
+
+      .log-tab.active {
+        border-bottom-color: #5b6aff;
+        color: #5b6aff;
+      }
+
+      .copy-btn.copied {
+        border-color: rgba(52, 211, 153, 0.2);
+        color: #34d399;
+      }
+
+      .form-group.has-success .form-input,
+      .form-group.has-success .form-select {
+        border-color: #34d399;
+      }
+
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -481,39 +125,20 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #5a5e78;
       }
-
-      @media (max-width: 640px) {
-        .header {
-          @apply flex-wrap gap-2;
-        }
-
-        .status-bar {
-          @apply order-3 mt-1 w-full overflow-x-auto;
-        }
-
-        .request-row {
-          @apply flex-wrap;
-        }
-
-        .endpoint-input {
-          @apply min-w-full;
-        }
-
-        .log-meta {
-          @apply gap-2;
-        }
-
-        .log-duration {
-          @apply hidden;
-        }
-      }
     </style>
   </head>
-  <body>
-    <div class="app">
+  <body
+    class="min-h-screen overflow-y-scroll bg-[#0f1117] font-sans text-[15px] leading-relaxed text-[#e4e6f0] antialiased [scrollbar-gutter:stable]"
+  >
+    <div class="app mx-auto max-w-[960px] px-5">
       <!-- Header -->
-      <header class="header">
-        <a class="header-brand" href="">
+      <header
+        class="header sticky top-0 z-[100] mb-6 flex flex-wrap items-center justify-between gap-2 border-b border-[#2a2d3e] bg-[#0f1117] py-4 sm:flex-nowrap sm:gap-0"
+      >
+        <a
+          class="header-brand flex items-center gap-2.5 text-[1.1rem] font-bold tracking-[-0.02em] text-[#e4e6f0] no-underline"
+          href=""
+        >
           <svg
             width="22"
             height="22"
@@ -530,59 +155,92 @@
           </svg>
           Proffix API Debugger
         </a>
-        <div class="status-bar">
+        <div
+          class="status-bar order-3 mt-1 flex min-w-0 w-full flex-nowrap items-center gap-3 overflow-x-auto sm:order-none sm:mt-0 sm:mr-2 sm:ml-auto sm:w-auto"
+        >
           <!-- Connection states -->
-          <div class="status-pill status-pill-btn" id="lblConnectionNot">
-            <span class="dot red"></span>
+          <div
+            class="status-pill status-pill-btn inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
+            id="lblConnectionNot"
+          >
+            <span
+              class="dot h-[7px] w-[7px] shrink-0 rounded-full bg-[#f87171] shadow-[0_0_6px_#f87171]"
+            ></span>
             Not connected
           </div>
           <div
-            class="status-pill status-pill-btn hidden"
+            class="status-pill status-pill-btn hidden inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
             id="lblConnectionInProgress"
           >
-            <span class="dot yellow pulse"></span>
+            <span
+              class="dot pulse h-[7px] w-[7px] shrink-0 rounded-full bg-[#fbbf24] shadow-[0_0_6px_#fbbf24]"
+            ></span>
             Connecting...
           </div>
-          <div class="status-pill status-pill-btn hidden" id="lblConnectionOk">
-            <span class="dot green"></span>
+          <div
+            class="status-pill status-pill-btn hidden inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
+            id="lblConnectionOk"
+          >
+            <span
+              class="dot h-[7px] w-[7px] shrink-0 rounded-full bg-[#34d399] shadow-[0_0_6px_#34d399]"
+            ></span>
             API <span id="lblRestApiVersion"></span>&nbsp;·&nbsp;<span
               id="lblRestApiUrl"
               style="opacity: 0.7"
             ></span>
           </div>
           <div
-            class="status-pill status-pill-btn hidden"
+            class="status-pill status-pill-btn hidden inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
             id="lblConnectionFailed"
           >
-            <span class="dot red"></span>
+            <span
+              class="dot h-[7px] w-[7px] shrink-0 rounded-full bg-[#f87171] shadow-[0_0_6px_#f87171]"
+            ></span>
             Connection failed
           </div>
 
           <!-- Login states -->
-          <div class="status-pill status-pill-btn hidden" id="lblLoginNot">
-            <span class="dot red"></span>
+          <div
+            class="status-pill status-pill-btn hidden inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
+            id="lblLoginNot"
+          >
+            <span
+              class="dot h-[7px] w-[7px] shrink-0 rounded-full bg-[#f87171] shadow-[0_0_6px_#f87171]"
+            ></span>
             Not logged in
           </div>
           <div
-            class="status-pill status-pill-btn hidden"
+            class="status-pill status-pill-btn hidden inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
             id="lblLoginInProgress"
           >
-            <span class="dot yellow pulse"></span>
+            <span
+              class="dot pulse h-[7px] w-[7px] shrink-0 rounded-full bg-[#fbbf24] shadow-[0_0_6px_#fbbf24]"
+            ></span>
             Logging in...
           </div>
-          <div class="status-pill status-pill-btn hidden" id="lblLoginOk">
-            <span class="dot green"></span>
+          <div
+            class="status-pill status-pill-btn hidden inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
+            id="lblLoginOk"
+          >
+            <span
+              class="dot h-[7px] w-[7px] shrink-0 rounded-full bg-[#34d399] shadow-[0_0_6px_#34d399]"
+            ></span>
             <span id="lblUsername"></span>
           </div>
-          <div class="status-pill status-pill-btn hidden" id="lblLoginFailed">
-            <span class="dot red"></span>
+          <div
+            class="status-pill status-pill-btn hidden inline-flex shrink-0 cursor-pointer select-none items-center gap-[7px] whitespace-nowrap rounded-full border border-[#2a2d3e] bg-[#161822] px-3.5 py-1.5 text-[0.8rem] font-medium transition hover:border-[#5b6aff] hover:bg-[rgba(91,106,255,0.12)]"
+            id="lblLoginFailed"
+          >
+            <span
+              class="dot h-[7px] w-[7px] shrink-0 rounded-full bg-[#f87171] shadow-[0_0_6px_#f87171]"
+            ></span>
             Login failed
           </div>
         </div>
-        <div class="header-actions">
+        <div class="header-actions flex shrink-0 items-center gap-2">
           <button
             type="button"
-            class="btn-icon hidden"
+            class="btn-icon hidden inline-flex h-[30px] w-[30px] items-center justify-center rounded-md border border-[#2a2d3e] bg-[#161822] p-1.5 text-[#8b8fa8] transition hover:border-[rgba(248,113,113,0.2)] hover:bg-[rgba(248,113,113,0.08)] hover:text-[#f87171]"
             id="btnLogout"
             title="Logout"
             aria-label="Logout"
@@ -606,7 +264,10 @@
       </header>
 
       <!-- Session Timeout Banner -->
-      <div class="timeout-banner hidden" id="lblLoginTimeout">
+      <div
+        class="timeout-banner hidden mb-4 flex items-center gap-2.5 rounded-[10px] border border-amber-400/20 bg-[rgba(251,191,36,0.08)] px-4 py-2.5 text-[0.85rem] text-amber-400"
+        id="lblLoginTimeout"
+      >
         <svg
           width="16"
           height="16"
@@ -622,24 +283,31 @@
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
         Session expired
-        <button type="button" class="btn btn-sm" id="btnRelogin">
+        <button
+          type="button"
+          class="btn btn-sm inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#2a2d3e] bg-[#161822] px-2.5 py-[5px] text-[0.78rem] leading-[1.4] font-medium text-[#e4e6f0] transition duration-150 hover:border-[#5a5e78] hover:bg-[#1c1f2e] active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+          id="btnRelogin"
+        >
           Log in again
         </button>
       </div>
 
       <!-- Request Builder -->
-      <div class="request-builder">
+      <div
+        class="request-builder mb-6 rounded-[14px] border border-[#2a2d3e] bg-[#161822] p-1"
+      >
         <form id="requestform">
-          <div class="request-row">
-            <div class="method-selector">
+          <div class="request-row flex flex-wrap items-center sm:flex-nowrap">
+            <div class="method-selector relative">
               <button
                 type="button"
-                class="method-btn"
+                class="method-btn flex items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-transparent px-3.5 py-2.5 font-mono text-[0.85rem] font-semibold tracking-[0.02em] text-emerald-400 transition duration-150 hover:bg-[#1c1f2e]"
                 id="btnHttpMethod"
                 data-method="GET"
               >
                 <span class="method-text">GET</span>
                 <svg
+                  class="method-chevron"
                   width="12"
                   height="12"
                   viewBox="0 0 24 24"
@@ -652,36 +320,70 @@
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
-              <div class="method-dropdown" id="lstHttpMethods">
-                <button type="button" class="method-option" data-method="GET">
-                  <span class="method-name">GET</span
-                  ><span class="method-label">fetch</span>
-                </button>
-                <button type="button" class="method-option" data-method="POST">
-                  <span class="method-name">POST</span
-                  ><span class="method-label">create</span>
-                </button>
-                <button type="button" class="method-option" data-method="PUT">
-                  <span class="method-name">PUT</span
-                  ><span class="method-label">replace</span>
-                </button>
-                <button type="button" class="method-option" data-method="PATCH">
-                  <span class="method-name">PATCH</span
-                  ><span class="method-label">update</span>
+              <div
+                class="method-dropdown absolute left-0 top-[calc(100%+4px)] z-[200] min-w-[170px] rounded-[10px] border border-[#2a2d3e] bg-[#232639] p-1 shadow-2xl"
+                id="lstHttpMethods"
+              >
+                <button
+                  type="button"
+                  class="method-option flex w-full items-center gap-2.5 rounded-md bg-transparent px-3 py-2 text-left font-mono text-[0.85rem] font-medium text-[#e4e6f0] transition hover:bg-[#1c1f2e]"
+                  data-method="GET"
+                >
+                  <span class="method-name text-emerald-400">GET</span
+                  ><span
+                    class="method-label ml-auto font-sans text-[0.78rem] font-normal text-[#5a5e78]"
+                    >fetch</span
+                  >
                 </button>
                 <button
                   type="button"
-                  class="method-option"
+                  class="method-option flex w-full items-center gap-2.5 rounded-md bg-transparent px-3 py-2 text-left font-mono text-[0.85rem] font-medium text-[#e4e6f0] transition hover:bg-[#1c1f2e]"
+                  data-method="POST"
+                >
+                  <span class="method-name text-amber-400">POST</span
+                  ><span
+                    class="method-label ml-auto font-sans text-[0.78rem] font-normal text-[#5a5e78]"
+                    >create</span
+                  >
+                </button>
+                <button
+                  type="button"
+                  class="method-option flex w-full items-center gap-2.5 rounded-md bg-transparent px-3 py-2 text-left font-mono text-[0.85rem] font-medium text-[#e4e6f0] transition hover:bg-[#1c1f2e]"
+                  data-method="PUT"
+                >
+                  <span class="method-name text-orange-400">PUT</span
+                  ><span
+                    class="method-label ml-auto font-sans text-[0.78rem] font-normal text-[#5a5e78]"
+                    >replace</span
+                  >
+                </button>
+                <button
+                  type="button"
+                  class="method-option flex w-full items-center gap-2.5 rounded-md bg-transparent px-3 py-2 text-left font-mono text-[0.85rem] font-medium text-[#e4e6f0] transition hover:bg-[#1c1f2e]"
+                  data-method="PATCH"
+                >
+                  <span class="method-name text-violet-400">PATCH</span
+                  ><span
+                    class="method-label ml-auto font-sans text-[0.78rem] font-normal text-[#5a5e78]"
+                    >update</span
+                  >
+                </button>
+                <button
+                  type="button"
+                  class="method-option flex w-full items-center gap-2.5 rounded-md bg-transparent px-3 py-2 text-left font-mono text-[0.85rem] font-medium text-[#e4e6f0] transition hover:bg-[#1c1f2e]"
                   data-method="DELETE"
                 >
-                  <span class="method-name">DELETE</span
-                  ><span class="method-label">delete</span>
+                  <span class="method-name text-rose-400">DELETE</span
+                  ><span
+                    class="method-label ml-auto font-sans text-[0.78rem] font-normal text-[#5a5e78]"
+                    >delete</span
+                  >
                 </button>
               </div>
             </div>
             <input
               type="text"
-              class="endpoint-input"
+              class="endpoint-input min-w-full flex-1 border-none bg-transparent px-3 py-2.5 font-mono text-[0.9rem] text-[#e4e6f0] outline-none placeholder:text-[#5a5e78] sm:min-w-0"
               id="txtEndpoint"
               placeholder="e.g. ADR/Address/1"
               autocomplete="off"
@@ -689,13 +391,17 @@
             />
             <button
               type="submit"
-              class="send-btn"
+              class="send-btn relative m-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border-none bg-[#5b6aff] p-0 text-white leading-none transition duration-150 hover:bg-[#4a58e0] active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
               id="btnSend"
               disabled
               aria-label="Send (Ctrl+Enter)"
               title="Send (Ctrl+Enter)"
             >
-              <span class="icon-wrap" id="iconSend" aria-hidden="true">
+              <span
+                class="icon-wrap inline-flex h-4 w-4 items-center justify-center"
+                id="iconSend"
+                aria-hidden="true"
+              >
                 <svg
                   width="16"
                   height="16"
@@ -710,29 +416,46 @@
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>
               </span>
-              <span class="sr-only">Send</span>
-              <span class="shortcut">Ctrl+↵</span>
+              <span
+                class="sr-only absolute h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 [clip:rect(0,0,0,0)] [-m-px]"
+                >Send</span
+              >
+              <span class="shortcut hidden">Ctrl+↵</span>
             </button>
           </div>
-          <div class="body-editor" id="httpbody">
+          <div class="body-editor px-1 pb-1 pt-2" id="httpbody">
             <textarea
-              class="body-textarea"
+              class="body-textarea min-h-[180px] w-full resize-y rounded-[10px] border border-[#2a2d3e] bg-[#1a1d2e] p-3.5 font-mono text-[0.85rem] leading-relaxed text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
               id="txtHttpBody"
               placeholder='{ "key": "value" }'
               spellcheck="false"
             ></textarea>
-            <div class="body-error hidden" id="lblHttpBodyError"></div>
+            <div
+              class="body-error hidden px-2 pt-1.5 text-[0.8rem] text-[#f87171]"
+              id="lblHttpBodyError"
+            ></div>
           </div>
         </form>
       </div>
 
       <!-- Log Section -->
-      <div class="section-header">
+      <div class="section-header mb-4 flex items-center justify-between">
         <div>
-          <span class="section-title">Response Log</span>
-          <span class="log-count hidden" id="logCount">0</span>
+          <span
+            class="section-title text-[0.8rem] font-semibold tracking-[0.08em] text-[#5a5e78] uppercase"
+            >Response Log</span
+          >
+          <span
+            class="log-count hidden ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#1c1f2e] px-1.5 text-[0.72rem] font-semibold text-[#8b8fa8]"
+            id="logCount"
+            >0</span
+          >
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" id="btnLogClear">
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-transparent bg-transparent px-2.5 py-[5px] text-[0.78rem] leading-[1.4] font-medium text-[#8b8fa8] transition duration-150 hover:bg-[#1c1f2e] hover:text-[#e4e6f0] active:scale-95"
+          id="btnLogClear"
+        >
           <svg
             width="14"
             height="14"
@@ -753,8 +476,12 @@
       </div>
 
       <div id="output">
-        <div class="log-empty" id="logEmpty">
+        <div
+          class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]"
+          id="logEmpty"
+        >
           <svg
+            class="mb-3 opacity-30"
             width="40"
             height="40"
             viewBox="0 0 24 24"
@@ -776,11 +503,24 @@
     </div>
 
     <!-- Connection Settings Modal -->
-    <div class="modal-overlay" id="modalConnectionSettings">
-      <div class="modal">
-        <div class="modal-header">
-          <h3 class="modal-title">Connection settings</h3>
-          <button type="button" class="modal-close" data-dismiss="modal">
+    <div
+      class="modal-overlay fixed inset-0 z-[1000] items-center justify-center bg-black/60 p-5 [backdrop-filter:blur(4px)]"
+      id="modalConnectionSettings"
+    >
+      <div
+        class="modal w-full max-w-[480px] rounded-[14px] border border-[#2a2d3e] bg-[#161822] shadow-2xl [animation:modal-in_200ms_ease]"
+      >
+        <div
+          class="modal-header flex items-center justify-between border-b border-[#2a2d3e] px-[22px] py-[18px]"
+        >
+          <h3 class="modal-title text-base font-semibold">
+            Connection settings
+          </h3>
+          <button
+            type="button"
+            class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
+            data-dismiss="modal"
+          >
             <svg
               width="18"
               height="18"
@@ -796,47 +536,65 @@
             </svg>
           </button>
         </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label" for="txtConnSettRestApiUrl"
+        <div class="modal-body p-[22px]">
+          <div class="form-group mb-4 last:mb-0">
+            <label
+              class="form-label mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8]"
+              for="txtConnSettRestApiUrl"
               >REST API URL</label
             >
             <input
               type="url"
-              class="form-input"
+              class="form-input w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
               id="txtConnSettRestApiUrl"
               placeholder="https://remote.proffix.net:11011/pxapi/v4"
             />
-            <div class="form-hint">
+            <div class="form-hint mt-1 text-[0.75rem] text-[#5a5e78]">
               e.g. https://remote.proffix.net:11011/pxapi/v4
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="txtConnSettRestApiPwd"
+          <div class="form-group mb-4 last:mb-0">
+            <label
+              class="form-label mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8]"
+              for="txtConnSettRestApiPwd"
               >Password (plain text)</label
             >
             <input
               type="password"
-              class="form-input"
+              class="form-input w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
               id="txtConnSettRestApiPwd"
               placeholder="Will be hashed automatically"
             />
           </div>
-          <div class="form-group">
-            <label class="form-label" for="txtConnSettRestApiPwdHash"
+          <div class="form-group mb-4 last:mb-0">
+            <label
+              class="form-label mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8]"
+              for="txtConnSettRestApiPwdHash"
               >Password (SHA-256 hash)</label
             >
             <input
               type="password"
-              class="form-input"
+              class="form-input w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
               id="txtConnSettRestApiPwdHash"
               placeholder="Alternative: already hashed password"
             />
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="btnConnect">
+        <div
+          class="modal-footer flex items-center justify-end gap-2 border-t border-[#2a2d3e] px-[22px] py-4"
+        >
+          <button
+            type="button"
+            class="btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#2a2d3e] bg-[#161822] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-[#e4e6f0] transition duration-150 hover:border-[#5a5e78] hover:bg-[#1c1f2e] active:scale-95"
+            data-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#5b6aff] bg-[#5b6aff] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-white transition duration-150 hover:border-[#4a58e0] hover:bg-[#4a58e0] active:scale-95"
+            id="btnConnect"
+          >
             <svg
               width="14"
               height="14"
@@ -859,11 +617,22 @@
     </div>
 
     <!-- Login Modal -->
-    <div class="modal-overlay" id="modalLogin">
-      <div class="modal">
-        <div class="modal-header">
-          <h3 class="modal-title">Login</h3>
-          <button type="button" class="modal-close" data-dismiss="modal">
+    <div
+      class="modal-overlay fixed inset-0 z-[1000] items-center justify-center bg-black/60 p-5 [backdrop-filter:blur(4px)]"
+      id="modalLogin"
+    >
+      <div
+        class="modal w-full max-w-[480px] rounded-[14px] border border-[#2a2d3e] bg-[#161822] shadow-2xl [animation:modal-in_200ms_ease]"
+      >
+        <div
+          class="modal-header flex items-center justify-between border-b border-[#2a2d3e] px-[22px] py-[18px]"
+        >
+          <h3 class="modal-title text-base font-semibold">Login</h3>
+          <button
+            type="button"
+            class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
+            data-dismiss="modal"
+          >
             <svg
               width="18"
               height="18"
@@ -879,42 +648,75 @@
             </svg>
           </button>
         </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label" for="selDatabase">Database</label>
-            <select class="form-select" id="selDatabase"></select>
-            <div class="form-hint">Log out before switching.</div>
+        <div class="modal-body p-[22px]">
+          <div class="form-group mb-4 last:mb-0">
+            <label
+              class="form-label mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8]"
+              for="selDatabase"
+              >Database</label
+            >
+            <select
+              class="form-select w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition focus:border-[#5b6aff]"
+              id="selDatabase"
+            ></select>
+            <div class="form-hint mt-1 text-[0.75rem] text-[#5a5e78]">
+              Log out before switching.
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="txtLoginUsername">Username</label>
+          <div class="form-group mb-4 last:mb-0">
+            <label
+              class="form-label mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8]"
+              for="txtLoginUsername"
+              >Username</label
+            >
             <input
               type="text"
-              class="form-input"
+              class="form-input w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
               id="txtLoginUsername"
               autocomplete="username"
             />
           </div>
-          <div class="form-group">
-            <label class="form-label" for="txtLoginPwd"
+          <div class="form-group mb-4 last:mb-0">
+            <label
+              class="form-label mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8]"
+              for="txtLoginPwd"
               >Password (plain text)</label
             >
             <input
               type="password"
-              class="form-input"
+              class="form-input w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
               id="txtLoginPwd"
               autocomplete="current-password"
             />
           </div>
-          <div class="form-group">
-            <label class="form-label" for="txtLoginPwdHash"
+          <div class="form-group mb-4 last:mb-0">
+            <label
+              class="form-label mb-1.5 block text-[0.8rem] font-medium text-[#8b8fa8]"
+              for="txtLoginPwdHash"
               >Password (SHA-256 hash)</label
             >
-            <input type="password" class="form-input" id="txtLoginPwdHash" />
+            <input
+              type="password"
+              class="form-input w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
+              id="txtLoginPwdHash"
+            />
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="btnLogin">
+        <div
+          class="modal-footer flex items-center justify-end gap-2 border-t border-[#2a2d3e] px-[22px] py-4"
+        >
+          <button
+            type="button"
+            class="btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#2a2d3e] bg-[#161822] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-[#e4e6f0] transition duration-150 hover:border-[#5a5e78] hover:bg-[#1c1f2e] active:scale-95"
+            data-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#5b6aff] bg-[#5b6aff] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-white transition duration-150 hover:border-[#4a58e0] hover:bg-[#4a58e0] active:scale-95"
+            id="btnLogin"
+          >
             <svg
               width="14"
               height="14"
@@ -1120,6 +922,33 @@
         );
       }
 
+      function getMethodColorClass(method) {
+        var methodColors = {
+          GET: "text-emerald-400",
+          POST: "text-amber-400",
+          PUT: "text-orange-400",
+          PATCH: "text-violet-400",
+          DELETE: "text-rose-400",
+        };
+        return (
+          methodColors[String(method || "").toUpperCase()] || "text-sky-400"
+        );
+      }
+
+      function getMethodBadgeClass(method) {
+        var badgeColors = {
+          GET: "bg-emerald-400/10 text-emerald-400",
+          POST: "bg-amber-400/10 text-amber-400",
+          PUT: "bg-orange-400/10 text-orange-400",
+          PATCH: "bg-violet-400/10 text-violet-400",
+          DELETE: "bg-rose-400/10 text-rose-400",
+        };
+        return (
+          badgeColors[String(method || "").toUpperCase()] ||
+          "bg-sky-400/10 text-sky-400"
+        );
+      }
+
       // ═══════════════════════════════════════════════
       // Write Log Entry
       // ═══════════════════════════════════════════════
@@ -1138,8 +967,13 @@
         $("#logEmpty").addClass("hidden");
 
         var isSuccess = statuscode >= 200 && statuscode < 300;
-        var statusClass = isSuccess ? "ok" : "err";
-        var entryClass = isSuccess ? "success" : "error";
+        var statusClass = isSuccess
+          ? "bg-emerald-400/10 text-emerald-400"
+          : "bg-rose-400/10 text-rose-400";
+        var entryClass = isSuccess
+          ? "border-l-[3px] border-l-emerald-400"
+          : "border-l-[3px] border-l-rose-400";
+        var methodBadgeClass = getMethodBadgeClass(method);
         var now = new Date();
         var timeStr = now.toLocaleTimeString("en-CH", {
           hour: "2-digit",
@@ -1152,7 +986,7 @@
         if (locationHeader) {
           if (locationHeader.includes("/PRO/Datei/")) {
             locationHtml =
-              '<div class="log-location"><span style="color:var(--text-muted)">Location:</span> <a href="' +
+              '<div class="log-location border-b border-[#2a2d3e] px-4 py-2.5 text-[0.8rem]"><span style="color:#8b8fa8">Location:</span> <a class="text-[#5b6aff] no-underline hover:underline" href="' +
               locationHeader +
               "?pxSessionId=" +
               pxSessionId +
@@ -1161,7 +995,7 @@
               "</a></div>";
           } else {
             locationHtml =
-              '<div class="log-location"><span style="color:var(--text-muted)">Location:</span> ' +
+              '<div class="log-location border-b border-[#2a2d3e] px-4 py-2.5 text-[0.8rem]"><span style="color:#8b8fa8">Location:</span> ' +
               escapeHtml(locationHeader) +
               "</div>";
           }
@@ -1170,13 +1004,13 @@
         var id = "log-" + logcounter;
         var highlightedResponse = response
           ? syntaxHighlight(response)
-          : '<span style="color:var(--text-muted)">— leer —</span>';
+          : '<span style="color:#8b8fa8">— leer —</span>';
         var highlightedRequest = request
           ? syntaxHighlight(request)
-          : '<span style="color:var(--text-muted)">— leer —</span>';
+          : '<span style="color:#8b8fa8">— leer —</span>';
         var arrayCountBadge =
           typeof responseArrayCount === "number"
-            ? '<span class="log-tab-count" title="Top-level array length: ' +
+            ? '<span class="log-tab-count ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-sky-400/25 bg-sky-400/12 px-1.5 align-middle font-mono text-[0.68rem] leading-none font-semibold text-sky-400" title="Top-level array length: ' +
               responseArrayCount +
               '">' +
               responseArrayCount +
@@ -1187,57 +1021,60 @@
 
         var entry = $(
           '<div class="log-entry ' +
+            "mb-2.5 overflow-hidden rounded-[10px] border border-[#2a2d3e] bg-[#161822] transition duration-150 hover:border-[#5a5e78] " +
             entryClass +
             ' expanded" data-id="' +
             id +
             '">' +
-            '<div class="log-header">' +
+            '<div class="log-header flex cursor-pointer select-none items-center gap-2.5 px-4 py-3">' +
             '<span class="log-method ' +
-            method +
+            "rounded px-2 py-0.5 font-mono text-[0.78rem] font-bold tracking-[0.03em] " +
+            methodBadgeClass +
             '">' +
             method +
             "</span>" +
-            '<span class="log-endpoint">' +
+            '<span class="log-endpoint min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-mono text-[0.85rem] text-[#e4e6f0]">' +
             escapeHtml(endpointDisplay) +
             "</span>" +
-            '<div class="log-meta">' +
+            '<div class="log-meta flex shrink-0 items-center gap-2 sm:gap-3">' +
             '<span class="log-status ' +
+            "rounded px-2 py-0.5 font-mono text-[0.78rem] font-semibold " +
             statusClass +
             '">' +
             statuscode +
             " " +
             statuscodetext +
             "</span>" +
-            '<span class="log-duration">' +
+            '<span class="log-duration hidden min-w-[50px] text-right font-mono text-[0.75rem] text-[#5a5e78] sm:inline">' +
             duration +
             "ms</span>" +
-            '<span class="log-time">' +
+            '<span class="log-time text-[0.72rem] text-[#5a5e78]">' +
             timeStr +
             "</span>" +
-            '<button type="button" class="log-delete-btn" title="Delete entry" aria-label="Delete entry"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
-            '<svg class="log-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+            '<button type="button" class="log-delete-btn inline-flex h-5 w-5 items-center justify-center rounded bg-transparent text-[#5a5e78] transition hover:bg-rose-400/12 hover:text-rose-400" title="Delete entry" aria-label="Delete entry"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+            '<svg class="log-chevron shrink-0 text-[#5a5e78]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
             "</div>" +
             "</div>" +
-            '<div class="log-body">' +
+            '<div class="log-body border-t border-[#2a2d3e]">' +
             locationHtml +
-            '<div class="log-tabs">' +
-            '<button type="button" class="log-tab active" data-tab="response-' +
+            '<div class="log-tabs flex border-b border-[#2a2d3e]">' +
+            '<button type="button" class="log-tab active cursor-pointer border-b-2 border-transparent bg-transparent px-4 py-2 text-[0.8rem] font-medium text-[#5a5e78] transition hover:text-[#8b8fa8]" data-tab="response-' +
             id +
             '">' +
             responseTabLabel +
             "</button>" +
-            '<button type="button" class="log-tab" data-tab="request-' +
+            '<button type="button" class="log-tab cursor-pointer border-b-2 border-transparent bg-transparent px-4 py-2 text-[0.8rem] font-medium text-[#5a5e78] transition hover:text-[#8b8fa8]" data-tab="request-' +
             id +
             '">Request</button>' +
             "</div>" +
             '<div class="log-tab-content active" id="response-' +
             id +
             '">' +
-            '<div class="log-code-wrap">' +
-            '<button type="button" class="copy-btn" data-copy="response" data-id="' +
+            '<div class="log-code-wrap relative">' +
+            '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] cursor-pointer rounded-md border border-[#2a2d3e] bg-[#232639] px-2.5 py-1 text-[0.72rem] font-medium text-[#8b8fa8] transition hover:border-[#5a5e78] hover:text-[#e4e6f0]" data-copy="response" data-id="' +
             id +
             '">Copy</button>' +
-            '<div class="log-code">' +
+            '<div class="log-code max-h-[400px] overflow-x-auto overflow-y-auto break-words whitespace-pre-wrap px-4 py-3.5 font-mono text-[0.8rem] leading-[1.7] text-[#8b8fa8]">' +
             highlightedResponse +
             "</div>" +
             "</div>" +
@@ -1245,11 +1082,11 @@
             '<div class="log-tab-content" id="request-' +
             id +
             '">' +
-            '<div class="log-code-wrap">' +
-            '<button type="button" class="copy-btn" data-copy="request" data-id="' +
+            '<div class="log-code-wrap relative">' +
+            '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] cursor-pointer rounded-md border border-[#2a2d3e] bg-[#232639] px-2.5 py-1 text-[0.72rem] font-medium text-[#8b8fa8] transition hover:border-[#5a5e78] hover:text-[#e4e6f0]" data-copy="request" data-id="' +
             id +
             '">Copy</button>' +
-            '<div class="log-code">' +
+            '<div class="log-code max-h-[400px] overflow-x-auto overflow-y-auto break-words whitespace-pre-wrap px-4 py-3.5 font-mono text-[0.8rem] leading-[1.7] text-[#8b8fa8]">' +
             highlightedRequest +
             "</div>" +
             "</div>" +
@@ -1433,6 +1270,15 @@
         var btn = document.getElementById("btnHttpMethod");
         btn.setAttribute("data-method", method);
         btn.querySelector(".method-text").textContent = method;
+        btn.classList.remove(
+          "text-emerald-400",
+          "text-amber-400",
+          "text-orange-400",
+          "text-violet-400",
+          "text-rose-400",
+          "text-sky-400",
+        );
+        btn.classList.add(getMethodColorClass(method));
 
         // Show/hide body editor
         var bodyEditor = document.getElementById("httpbody");
@@ -1573,7 +1419,7 @@
         $("#btnLogClear").click(function () {
           $("#output").empty();
           $("#output").append(
-            '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
+            '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><svg class="mb-3 opacity-30" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
           );
           logcounter = 0;
           updateLogCount();
@@ -1615,7 +1461,7 @@
               empty.removeClass("hidden");
             } else {
               $("#output").append(
-                '<div class="log-empty" id="logEmpty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
+                '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><svg class="mb-3 opacity-30" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>No requests sent yet</div></div>',
               );
             }
           }
