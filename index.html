@@ -1429,12 +1429,6 @@
               placeholder="Alternative: already hashed password"
             />
           </div>
-          <div class="form-group">
-            <label class="form-check">
-              <input type="checkbox" id="chkConnSettRemember" />
-              Save to local storage
-            </label>
-          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn" data-dismiss="modal">Cancel</button>
@@ -1513,12 +1507,6 @@
             >
             <input type="password" class="form-input" id="txtLoginPwdHash" />
           </div>
-          <div class="form-group">
-            <label class="form-check">
-              <input type="checkbox" id="chkLoginRemember" />
-              Save to local storage
-            </label>
-          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn" data-dismiss="modal">Cancel</button>
@@ -1557,12 +1545,6 @@
       var wasLoggedIn = false;
       var selectedHttpMethod = "GET";
       var logcounter = 0;
-
-      // ═══════════════════════════════════════════════
-      // Constants
-      // ═══════════════════════════════════════════════
-      const STORAGENAME_CONNECTIONSETTINGS = "PxRestApiConnectionSettings";
-      const STORAGENAME_LOGINOBJECT = "PxRestApiLoginObject";
 
       // ═══════════════════════════════════════════════
       // Custom modal show/hide (replaces Bootstrap modals)
@@ -1909,7 +1891,7 @@
       // ═══════════════════════════════════════════════
       // Connect
       // ═══════════════════════════════════════════════
-      var doConnect = function (trySaveSettings) {
+      var doConnect = function () {
         $("#lblConnectionNot").addClass("hidden");
         $("#lblConnectionInProgress").removeClass("hidden");
         $("#lblConnectionOk").addClass("hidden");
@@ -1928,23 +1910,6 @@
             // Show login-not after connected
             if (!wasLoggedIn) {
               $("#lblLoginNot").removeClass("hidden");
-            }
-
-            if (trySaveSettings) {
-              fieldValidation($("#txtConnSettRestApiUrl"), function () {
-                return true;
-              });
-              fieldValidation($("#txtConnSettRestApiPwd"), function () {
-                return true;
-              });
-              if ($("#chkConnSettRemember").val()) {
-                if (localStorage) {
-                  localStorage.setItem(
-                    STORAGENAME_CONNECTIONSETTINGS,
-                    JSON.stringify({ default: connectionSettings }),
-                  );
-                }
-              }
             }
 
             // Load databases
@@ -1989,7 +1954,7 @@
       // ═══════════════════════════════════════════════
       // Login
       // ═══════════════════════════════════════════════
-      var doLogin = function (trySaveSettings) {
+      var doLogin = function () {
         $("#lblLoginNot").addClass("hidden");
         $("#lblLoginInProgress").removeClass("hidden");
         $("#lblLoginOk").addClass("hidden");
@@ -2009,26 +1974,6 @@
                 login.Benutzer + " · " + login.Datenbank.Name,
               );
             });
-
-            if (trySaveSettings) {
-              fieldValidation($("#selDatabase"), function () {
-                return true;
-              });
-              fieldValidation($("#txtLoginUsername"), function () {
-                return true;
-              });
-              fieldValidation($("#txtLoginPwd"), function () {
-                return true;
-              });
-              if ($("#chkLoginRemember").val()) {
-                if (localStorage) {
-                  localStorage.setItem(
-                    STORAGENAME_LOGINOBJECT,
-                    JSON.stringify({ default: loginObject }),
-                  );
-                }
-              }
-            }
           },
           function () {
             $("#lblLoginInProgress").addClass("hidden");
@@ -2085,26 +2030,9 @@
           $("#txtConnSettRestApiUrl").val(connectionSettings.url);
         }
 
-        // Local Storage
-        if (localStorage && paramUrl == null && paramPwhash == null) {
-          var storageString = localStorage.getItem(
-            STORAGENAME_CONNECTIONSETTINGS,
-          );
-          if (storageString) {
-            connectionSettings = JSON.parse(storageString).default;
-            $("#txtConnSettRestApiUrl").val(connectionSettings.url);
-          }
-          storageString = localStorage.getItem(STORAGENAME_LOGINOBJECT);
-          if (storageString) {
-            loginObject = JSON.parse(storageString).default;
-            $("#txtLoginUsername").val(loginObject.Benutzer);
-            loginObject.Module = ["VOL"];
-          }
-        }
-
         // Auto-connect and login
-        if (connectionSettings) doConnect(false);
-        if (loginObject) doLogin(false);
+        if (connectionSettings) doConnect();
+        if (loginObject) doLogin();
 
         // ═══════════════════════════════════════════════
         // Events
@@ -2143,7 +2071,7 @@
                 url: $("#txtConnSettRestApiUrl").val(),
                 pwd: passwordHash,
               };
-              doConnect($("#chkConnSettRemember").val());
+              doConnect();
               hideModal("modalConnectionSettings");
             } else {
               alert("Please enter a password or password hash.");
@@ -2176,7 +2104,7 @@
                 Module: modArr,
                 Datenbank: { Name: $("#selDatabase").val() },
               };
-              doLogin($("#chkLoginRemember").val());
+              doLogin();
               hideModal("modalLogin");
             } else {
               alert("Please enter a password or password hash.");
