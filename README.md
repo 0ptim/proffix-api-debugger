@@ -17,6 +17,17 @@ This project keeps things intentionally simple: the whole app lives in a single 
 2. Enter your API details.
 3. Send requests and inspect the responses.
 
+## Deploy debugger into installed Proffix REST API versions
+
+Use the included python script to copy this repository's `index.html` into every detected API version folder under the installed Proffix REST API `Assemblies` directory.
+
+- Default run (auto-discovery):
+  - `python deploy_debugger.py`
+- Preview only (no changes):
+  - `python deploy_debugger.py --dry-run`
+- Explicit known path (your machine):
+  - `python deploy_debugger.py --assemblies "C:\Program Files\Proffix REST API\Proffix REST API\Assemblies"`
+
 ## Notes
 
 - This is an enhanced, cleaned-up take on the original Proffix debugger.
