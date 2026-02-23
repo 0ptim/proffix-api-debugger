@@ -425,10 +425,12 @@
       }
 
       .send-btn {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 8px 20px;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
         border: none;
         border-radius: var(--radius-md);
         background: var(--accent);
@@ -440,6 +442,7 @@
         transition: all var(--transition);
         white-space: nowrap;
         margin: 2px;
+        flex-shrink: 0;
       }
       .send-btn:hover {
         background: var(--accent-hover);
@@ -452,9 +455,31 @@
         cursor: not-allowed;
       }
       .send-btn .shortcut {
-        font-size: 0.7rem;
-        opacity: 0.6;
-        margin-left: 2px;
+        display: none;
+      }
+
+      .send-btn .icon-wrap {
+        width: 16px;
+        height: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .send-btn .icon-wrap svg {
+        display: block;
+      }
+
+      .send-btn .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
 
       @keyframes spin {
@@ -463,12 +488,14 @@
         }
       }
       .send-btn .spinner {
-        width: 14px;
-        height: 14px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        width: 16px;
+        height: 16px;
+        border: 2.5px solid rgba(255, 255, 255, 0.45);
         border-top-color: #fff;
         border-radius: 50%;
         animation: spin 0.6s linear infinite;
+        display: block;
+        box-sizing: border-box;
       }
 
       .body-editor {
@@ -1021,10 +1048,6 @@
         .endpoint-input {
           min-width: 100%;
         }
-        .send-btn {
-          width: 100%;
-          justify-content: center;
-        }
         .send-btn .shortcut {
           display: none;
         }
@@ -1282,11 +1305,18 @@
               autocomplete="off"
               spellcheck="false"
             />
-            <button type="submit" class="send-btn" id="btnSend" disabled>
-              <span id="iconSend">
+            <button
+              type="submit"
+              class="send-btn"
+              id="btnSend"
+              disabled
+              aria-label="Senden (Ctrl+Enter)"
+              title="Senden (Ctrl+Enter)"
+            >
+              <span class="icon-wrap" id="iconSend" aria-hidden="true">
                 <svg
-                  width="15"
-                  height="15"
+                  width="16"
+                  height="16"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -1298,7 +1328,7 @@
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>
               </span>
-              Send
+              <span class="sr-only">Senden</span>
               <span class="shortcut">Ctrl+↵</span>
             </button>
           </div>
@@ -1689,7 +1719,7 @@
           $("#iconSend").html('<span class="spinner"></span>');
         } else {
           $("#iconSend").html(
-            '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
           );
         }
       };
