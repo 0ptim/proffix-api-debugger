@@ -678,6 +678,25 @@
         background: rgba(248, 113, 113, 0.1);
       }
 
+      .log-tab-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 14px;
+        height: 14px;
+        padding: 0 4px;
+        margin-left: 5px;
+        border-radius: 999px;
+        font-family: var(--font-mono);
+        font-size: 0.62rem;
+        font-weight: 600;
+        line-height: 1;
+        color: var(--info);
+        background: rgba(96, 165, 250, 0.12);
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        vertical-align: middle;
+      }
+
       .log-duration {
         font-family: var(--font-mono);
         font-size: 0.75rem;
@@ -1598,6 +1617,9 @@
           success: function (responseObject, status, request) {
             var endtime = Date.now();
             pxSessionId = request.getResponseHeader("PxSessionId");
+            var responseArrayCount = Array.isArray(responseObject)
+              ? responseObject.length
+              : null;
             writeLog(
               method.toUpperCase(),
               endpoint,
@@ -1607,6 +1629,7 @@
               data ? JSON.stringify(data, null, 2) : "",
               endtime - starttime,
               method == "POST" ? request.getResponseHeader("Location") : null,
+              responseArrayCount,
             );
             decreaseNoOfRequests();
             $("#lblLoginTimeout").addClass("hidden");
@@ -1619,10 +1642,14 @@
               $("#lblLoginTimeout").removeClass("hidden");
             }
             var responseTextForLog = request.responseText || "";
+            var parsedResponseForLog = request.responseJSON;
             if (responseTextForLog.length > 0) {
               try {
+                if (!parsedResponseForLog) {
+                  parsedResponseForLog = JSON.parse(responseTextForLog);
+                }
                 responseTextForLog = JSON.stringify(
-                  JSON.parse(responseTextForLog),
+                  parsedResponseForLog,
                   null,
                   2,
                 );
@@ -1636,6 +1663,10 @@
               responseTextForLog,
               data ? JSON.stringify(data, null, 2) : "",
               endtime - starttime,
+              null,
+              Array.isArray(parsedResponseForLog)
+                ? parsedResponseForLog.length
+                : null,
             );
             decreaseNoOfRequests();
             if (error != undefined) error(request.responseJSON, request.status);
@@ -1715,6 +1746,7 @@
         request,
         duration,
         locationHeader,
+        responseArrayCount,
       ) {
         logcounter++;
         $("#logEmpty").addClass("hidden");
@@ -1756,6 +1788,15 @@
         var highlightedRequest = request
           ? syntaxHighlight(request)
           : '<span style="color:var(--text-muted)">— leer —</span>';
+        var arrayCountBadge =
+          typeof responseArrayCount === "number"
+            ? '<span class="log-tab-count" title="Top-level array length: ' +
+              responseArrayCount +
+              '">' +
+              responseArrayCount +
+              "</span>"
+            : "";
+        var responseTabLabel = "Response" + arrayCountBadge;
 
         var entry = $(
           '<div class="log-entry ' +
@@ -1795,7 +1836,9 @@
             '<div class="log-tabs">' +
             '<button type="button" class="log-tab active" data-tab="response-' +
             id +
-            '">Response</button>' +
+            '">' +
+            responseTabLabel +
+            "</button>" +
             '<button type="button" class="log-tab" data-tab="request-' +
             id +
             '">Request</button>' +
