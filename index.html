@@ -1854,6 +1854,15 @@
           .replace(/"/g, "&quot;");
       }
 
+      function getApiHostDisplay(url) {
+        if (!url) return "";
+        try {
+          return new URL(url).host;
+        } catch (e) {
+          return url.replace(/^[a-z]+:\/\//i, "").split("/")[0];
+        }
+      }
+
       // ═══════════════════════════════════════════════
       // Connect
       // ═══════════════════════════════════════════════
@@ -1870,7 +1879,7 @@
             $("#lblConnectionInProgress").addClass("hidden");
             $("#lblConnectionOk").removeClass("hidden");
             $("#lblRestApiVersion").text(info.Version);
-            $("#lblRestApiUrl").text(connectionSettings.url);
+            $("#lblRestApiUrl").text(getApiHostDisplay(connectionSettings.url));
             $("#btnSend").removeAttr("disabled");
 
             // Show login-not after connected
