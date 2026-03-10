@@ -405,6 +405,50 @@
               <span class="shortcut hidden">Ctrl+↵</span>
             </button>
           </div>
+          <div class="px-1 pb-1 pt-2">
+            <div class="rounded-[10px] bg-[#12141d] p-2.5">
+              <div class="grid gap-1.5">
+                <div
+                  class="grid items-center gap-1.5 sm:grid-cols-[44px_minmax(0,1fr)_auto]"
+                >
+                  <label
+                    class="text-[0.78rem] font-medium text-[#8b8fa8] sm:pr-1 sm:text-right"
+                    for="txtEndpointPath"
+                    >Path</label
+                  >
+                  <input
+                    type="text"
+                    class="w-full rounded-md border border-[#2a2d3e] bg-[#161822] px-3 py-[9px] font-mono text-[0.82rem] text-[#c8cde0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
+                    id="txtEndpointPath"
+                    placeholder="e.g. PRO/SollstundenplanHistory"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm inline-flex h-[38px] w-[38px] items-center justify-center rounded-md border border-transparent bg-transparent p-0 text-[0.78rem] text-[#8b8fa8] transition duration-150 hover:bg-[#161822] hover:text-[#e4e6f0] active:scale-95"
+                    id="btnAddQueryParam"
+                    title="Add param"
+                    aria-label="Add param"
+                  >
+                    <i
+                      class="bi bi-plus-lg text-[12px] leading-none"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
+                </div>
+
+                <div class="grid gap-1.5 sm:grid-cols-[44px_minmax(0,1fr)]">
+                  <div
+                    class="pt-[10px] text-[0.78rem] font-medium text-[#8b8fa8] sm:pr-1 sm:text-right"
+                  >
+                    Params
+                  </div>
+                  <div class="grid gap-2" id="queryParamsList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="body-editor px-1 pb-1 pt-2" id="httpbody">
             <textarea
               class="body-textarea min-h-[180px] w-full resize-y rounded-[10px] border border-[#2a2d3e] bg-[#1a1d2e] p-3.5 font-mono text-[0.85rem] leading-relaxed text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
@@ -669,6 +713,9 @@
       var wasLoggedIn = false;
       var selectedHttpMethod = "GET";
       var logcounter = 0;
+      var endpointMasterSyncTimeout = null;
+      var isSyncingEndpointFromMaster = false;
+      var isSyncingEndpointFromDetails = false;
 
       var displayClassById = {
         lblConnectionNot: "inline-flex",
@@ -1139,6 +1186,148 @@
         }
       }
 
+      function getEndpointDetailInputClasses() {
+        return (
+          "w-full rounded-md border border-[#2a2d3e] bg-[#161822] px-3 py-[9px] " +
+          "font-mono text-[0.82rem] text-[#c8cde0] outline-none transition " +
+          "placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
+        );
+      }
+
+      function createEmptyEndpointParam() {
+        return { key: "", value: "" };
+      }
+
+      function parseEndpointForEditor(endpoint) {
+        var rawValue = String(endpoint || "");
+        var queryIndex = rawValue.indexOf("?");
+        var path =
+          queryIndex >= 0 ? rawValue.substring(0, queryIndex) : rawValue;
+        var query = queryIndex >= 0 ? rawValue.substring(queryIndex + 1) : "";
+        var params = [];
+
+        if (query.length > 0) {
+          query.split("&").forEach(function (segment) {
+            if (segment.length === 0) return;
+
+            var equalsIndex = segment.indexOf("=");
+            if (equalsIndex < 0) {
+              params.push({ key: segment, value: "" });
+              return;
+            }
+
+            params.push({
+              key: segment.substring(0, equalsIndex),
+              value: segment.substring(equalsIndex + 1),
+            });
+          });
+        }
+
+        return {
+          path: path,
+          params: params,
+        };
+      }
+
+      function buildEndpointFromEditor(path, params) {
+        var normalizedPath = String(path || "");
+        var queryParts = [];
+
+        (params || []).forEach(function (param) {
+          var key = String((param && param.key) || "");
+          var value = String((param && param.value) || "");
+
+          if (!key && !value) return;
+          queryParts.push(key + "=" + value);
+        });
+
+        return (
+          normalizedPath + (queryParts.length ? "?" + queryParts.join("&") : "")
+        );
+      }
+
+      function renderEndpointParams(params) {
+        var list = $("#queryParamsList");
+        var rows =
+          params && params.length
+            ? params.slice()
+            : [createEmptyEndpointParam()];
+
+        list.empty();
+
+        rows.forEach(function (param) {
+          var row = $(
+            '<div class="endpoint-param-row grid gap-2 sm:grid-cols-[minmax(0,0.42fr)_minmax(0,1.58fr)_auto]">' +
+              '<input type="text" class="endpoint-param-key ' +
+              getEndpointDetailInputClasses() +
+              '" placeholder="param" autocomplete="off" spellcheck="false" />' +
+              '<input type="text" class="endpoint-param-value ' +
+              getEndpointDetailInputClasses() +
+              '" placeholder="value" autocomplete="off" spellcheck="false" />' +
+              '<button type="button" class="endpoint-param-delete inline-flex h-[38px] w-[38px] items-center justify-center self-center rounded-md border border-[#2a2d3e] bg-[#161822] text-[#8b8fa8] transition hover:border-[rgba(248,113,113,0.2)] hover:bg-[rgba(248,113,113,0.08)] hover:text-[#f87171]" title="Remove param" aria-label="Remove param"><i class="bi bi-x-lg text-[11px] leading-none" aria-hidden="true"></i></button>' +
+              "</div>",
+          );
+
+          row.find(".endpoint-param-key").val(param.key || "");
+          row.find(".endpoint-param-value").val(param.value || "");
+          list.append(row);
+        });
+      }
+
+      function collectEndpointParamsFromEditor() {
+        return $("#queryParamsList .endpoint-param-row")
+          .map(function () {
+            return {
+              key: $(this).find(".endpoint-param-key").val(),
+              value: $(this).find(".endpoint-param-value").val(),
+            };
+          })
+          .get();
+      }
+
+      function syncEndpointEditorFromMasterInput() {
+        if (isSyncingEndpointFromDetails) return;
+
+        isSyncingEndpointFromMaster = true;
+        var parsed = parseEndpointForEditor($("#txtEndpoint").val());
+        $("#txtEndpointPath").val(parsed.path);
+        renderEndpointParams(parsed.params);
+        isSyncingEndpointFromMaster = false;
+      }
+
+      function syncMasterInputFromEndpointEditor() {
+        if (isSyncingEndpointFromMaster) return;
+
+        isSyncingEndpointFromDetails = true;
+        $("#txtEndpoint").val(
+          buildEndpointFromEditor(
+            $("#txtEndpointPath").val(),
+            collectEndpointParamsFromEditor(),
+          ),
+        );
+        isSyncingEndpointFromDetails = false;
+      }
+
+      function scheduleEndpointEditorSync() {
+        clearTimeout(endpointMasterSyncTimeout);
+        endpointMasterSyncTimeout = setTimeout(function () {
+          syncEndpointEditorFromMasterInput();
+        }, 180);
+      }
+
+      function addEndpointParamRow() {
+        var params = collectEndpointParamsFromEditor();
+
+        if (params.length === 1 && !params[0].key && !params[0].value) {
+          $("#queryParamsList .endpoint-param-key").first().trigger("focus");
+          return;
+        }
+
+        params.push(createEmptyEndpointParam());
+        renderEndpointParams(params);
+        $("#queryParamsList .endpoint-param-key").last().trigger("focus");
+      }
+
       // ═══════════════════════════════════════════════
       // Connect
       // ═══════════════════════════════════════════════
@@ -1293,6 +1482,8 @@
       // DOM Ready
       // ═══════════════════════════════════════════════
       $(document).ready(function () {
+        renderEndpointParams();
+
         // URL params
         var paramUrl = getUrlParam("url");
         var paramPwhash = getUrlParam("pwhash");
@@ -1307,6 +1498,8 @@
         // Auto-connect and login
         if (connectionSettings) doConnect();
         if (loginObject) doLogin();
+
+        syncEndpointEditorFromMasterInput();
 
         // ═══════════════════════════════════════════════
         // Events
@@ -1444,6 +1637,38 @@
           setHttpMethod($(this).attr("data-method"));
           $("#lstHttpMethods").removeClass("show");
           $("#btnHttpMethod").removeClass("open");
+        });
+
+        // Endpoint master input → parsed editor
+        $("#txtEndpoint").on("input change", function () {
+          scheduleEndpointEditorSync();
+        });
+
+        // Endpoint path / params → master input
+        $("#txtEndpointPath").on("input", function () {
+          syncMasterInputFromEndpointEditor();
+        });
+
+        $(document).on(
+          "input",
+          ".endpoint-param-key, .endpoint-param-value",
+          function () {
+            syncMasterInputFromEndpointEditor();
+          },
+        );
+
+        $("#btnAddQueryParam").click(function () {
+          addEndpointParamRow();
+        });
+
+        $(document).on("click", ".endpoint-param-delete", function () {
+          $(this).closest(".endpoint-param-row").remove();
+
+          if ($("#queryParamsList .endpoint-param-row").length === 0) {
+            renderEndpointParams();
+          }
+
+          syncMasterInputFromEndpointEditor();
         });
 
         // Log entry expand/collapse
