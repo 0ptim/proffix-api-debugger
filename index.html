@@ -1579,6 +1579,22 @@
           }
         });
 
+        // Enter in connection fields triggers connect
+        $("#modalConnectionSettings input").on("keydown", function (e) {
+          if (e.key !== "Enter") return;
+
+          e.preventDefault();
+          $("#btnConnect").trigger("click");
+        });
+
+        // Enter in login fields triggers login
+        $("#modalLogin input, #modalLogin select").on("keydown", function (e) {
+          if (e.key !== "Enter") return;
+
+          e.preventDefault();
+          $("#btnLogin").trigger("click");
+        });
+
         // Logout
         $("#btnLogout").click(function () {
           doApiCall("DELETE", "PRO/Login");
