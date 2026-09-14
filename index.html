@@ -4,161 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Proffix API Debugger</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-      @theme {
-        --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-        --font-mono:
-          "JetBrains Mono", "Fira Code", "Consolas", ui-monospace, monospace;
-      }
-
-      @keyframes pulse-dot {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.4;
-        }
-      }
-
-      .dot.pulse {
-        animation: pulse-dot 1.2s ease-in-out infinite;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .spinner {
-        width: 16px;
-        height: 16px;
-        border: 2.5px solid rgba(255, 255, 255, 0.45);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.6s linear infinite;
-        display: block;
-        box-sizing: border-box;
-      }
-
-      @keyframes modal-in {
-        from {
-          opacity: 0;
-          transform: translateY(10px) scale(0.98);
-        }
-        to {
-          opacity: 1;
-          transform: none;
-        }
-      }
-
-      .method-dropdown,
-      .body-editor,
-      .modal-overlay,
-      .log-body,
-      .log-tab-content {
-        display: none;
-      }
-
-      .method-dropdown.show,
-      .body-editor.show,
-      .modal-overlay.show,
-      .log-tab-content.active {
-        display: block;
-      }
-
-      .modal-overlay.show {
-        display: flex;
-      }
-
-      .log-entry.expanded .log-body {
-        display: block;
-      }
-
-      .method-btn .method-chevron,
-      .log-chevron {
-        transition: transform 150ms ease;
-      }
-
-      .method-btn.open .method-chevron,
-      .log-entry.expanded .log-chevron {
-        transform: rotate(180deg);
-      }
-
-      .log-tab.active {
-        border-bottom-color: #5b6aff;
-        color: #5b6aff;
-      }
-
-      .copy-btn.copied {
-        color: #34d399;
-      }
-
-      .log-code {
-        font-family:
-          "Berkeley Mono", "JetBrains Mono", "Cascadia Code", "Fira Code",
-          "Consolas", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-      }
-
-      .log-json-lines {
-        margin: 0;
-        display: grid;
-        gap: 0;
-      }
-
-      .log-json-line {
-        display: grid;
-        grid-template-columns: 3ch minmax(0, 1fr);
-        column-gap: 14px;
-      }
-
-      .log-json-lno {
-        user-select: none;
-        text-align: right;
-        color: rgba(139, 143, 168, 0.45);
-        font-size: 0.76rem;
-      }
-
-      .log-json-code {
-        min-width: 0;
-        color: #9aa0bc;
-      }
-
-      .form-group.has-success .form-input,
-      .form-group.has-success .form-select {
-        border-color: #34d399;
-      }
-
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: #2a2d3e;
-        border-radius: 4px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: #5a5e78;
-      }
-    </style>
+    <base href="./" data-deploy-href="/debugger/" />
+    <link rel="stylesheet" href="debugger.css" />
   </head>
   <body
     class="min-h-screen overflow-y-scroll bg-[#0f1117] font-sans text-[15px] leading-relaxed text-[#e4e6f0] antialiased [scrollbar-gutter:stable]"
@@ -168,13 +15,18 @@
       <header
         class="header sticky top-0 z-[100] mb-6 flex flex-wrap items-center justify-between gap-2 border-b border-[#2a2d3e] bg-[#0f1117] py-4 sm:flex-nowrap sm:gap-0"
       >
-        <a
+        <h1
           class="header-brand flex items-center gap-2.5 text-[1.1rem] font-bold tracking-[-0.02em] text-[#e4e6f0] no-underline"
-          href=""
         >
-          <i class="bi bi-fire text-[18px] leading-none" aria-hidden="true"></i>
+          <svg
+            class="ph-icon text-[18px]"
+            viewBox="0 0 256 256"
+            aria-hidden="true"
+          >
+            <path d="M143.38,17.85a8,8,0,0,0-12.63,3.41l-22,60.41L84.59,58.26a8,8,0,0,0-11.93.89C51,87.53,40,116.08,40,144a88,88,0,0,0,176,0C216,84.55,165.21,36,143.38,17.85Zm40.51,135.49a57.6,57.6,0,0,1-46.56,46.55A7.65,7.65,0,0,1,136,200a8,8,0,0,1-1.32-15.89c16.57-2.79,30.63-16.85,33.44-33.45a8,8,0,0,1,15.78,2.68Z" />
+          </svg>
           Proffix API Debugger
-        </a>
+        </h1>
         <div
           class="status-bar order-3 mt-1 flex min-w-0 w-full flex-nowrap items-center gap-3 overflow-x-auto sm:order-none sm:mt-0 sm:mr-3 sm:ml-auto sm:w-auto"
         >
@@ -206,7 +58,7 @@
             ></span>
             API <span id="lblRestApiVersion"></span>&nbsp;·&nbsp;<span
               id="lblRestApiUrl"
-              style="opacity: 0.7"
+              class="opacity-70"
             ></span>
           </div>
           <div
@@ -265,10 +117,13 @@
             title="Logout"
             aria-label="Logout"
           >
-            <i
-              class="bi bi-box-arrow-right text-[14px] leading-none"
+            <svg
+              class="ph-icon text-[14px]"
+              viewBox="0 0 256 256"
               aria-hidden="true"
-            ></i>
+            >
+              <path d="M118,216a6,6,0,0,1-6,6H48a6,6,0,0,1-6-6V40a6,6,0,0,1,6-6h64a6,6,0,0,1,0,12H54V210h58A6,6,0,0,1,118,216Zm110.24-92.24-40-40a6,6,0,0,0-8.48,8.48L209.51,122H112a6,6,0,0,0,0,12h97.51l-29.75,29.76a6,6,0,1,0,8.48,8.48l40-40A6,6,0,0,0,228.24,123.76Z" />
+            </svg>
           </button>
         </div>
       </header>
@@ -278,10 +133,13 @@
         class="timeout-banner hidden mb-4 items-center gap-2.5 rounded-[10px] border border-amber-400/20 bg-[rgba(251,191,36,0.08)] px-4 py-2.5 text-[0.85rem] text-amber-400"
         id="lblLoginTimeout"
       >
-        <i
-          class="bi bi-exclamation-circle text-[16px] leading-none"
+        <svg
+          class="ph-icon text-[16px]"
+          viewBox="0 0 256 256"
           aria-hidden="true"
-        ></i>
+        >
+          <path d="M128,26A102,102,0,1,0,230,128,102.12,102.12,0,0,0,128,26Zm0,192a90,90,0,1,1,90-90A90.1,90.1,0,0,1,128,218Zm-6-82V80a6,6,0,0,1,12,0v56a6,6,0,0,1-12,0Zm16,36a10,10,0,1,1-10-10A10,10,0,0,1,138,172Z" />
+        </svg>
         Session expired
         <button
           type="button"
@@ -306,10 +164,13 @@
                 data-method="GET"
               >
                 <span class="method-text">GET</span>
-                <i
-                  class="method-chevron bi bi-chevron-down text-[12px] leading-none"
+                <svg
+                  class="method-chevron ph-icon text-[12px]"
+                  viewBox="0 0 256 256"
                   aria-hidden="true"
-                ></i>
+                >
+                  <path d="M212.24,100.24l-80,80a6,6,0,0,1-8.48,0l-80-80a6,6,0,0,1,8.48-8.48L128,167.51l75.76-75.75a6,6,0,0,1,8.48,8.48Z" />
+                </svg>
               </button>
               <div
                 class="method-dropdown absolute left-0 top-[calc(100%+4px)] z-[200] min-w-[170px] rounded-[10px] border border-[#2a2d3e] bg-[#232639] p-1 shadow-2xl"
@@ -393,10 +254,13 @@
                 id="iconSend"
                 aria-hidden="true"
               >
-                <i
-                  class="bi bi-send-fill text-[14px] leading-none"
+                <svg
+                  class="ph-icon text-[14px]"
+                  viewBox="0 0 256 256"
                   aria-hidden="true"
-                ></i>
+                >
+                  <path d="M225.88,30.12a13.83,13.83,0,0,0-13.7-3.58l-.11,0L20.14,84.77A14,14,0,0,0,18,110.85l85.56,41.64L145.12,238a13.87,13.87,0,0,0,12.61,8c.4,0,.81,0,1.21-.05a13.9,13.9,0,0,0,12.29-10.09l58.2-191.93,0-.11A13.83,13.83,0,0,0,225.88,30.12Zm-8,10.4L159.73,232.43l0,.11a2,2,0,0,1-3.76.26l-40.68-83.58,49-49a6,6,0,1,0-8.49-8.49l-49,49L23.15,100a2,2,0,0,1,.31-3.74l.11,0L215.48,38.08a1.94,1.94,0,0,1,1.92.52A2,2,0,0,1,217.92,40.52Z" />
+                </svg>
               </span>
               <span
                 class="sr-only absolute h-px w-px overflow-hidden whitespace-nowrap border-0 p-0 [clip:rect(0,0,0,0)] [-m-px]"
@@ -431,10 +295,13 @@
                     title="Add param"
                     aria-label="Add param"
                   >
-                    <i
-                      class="bi bi-plus-lg text-[12px] leading-none"
+                    <svg
+                      class="ph-icon text-[12px]"
+                      viewBox="0 0 256 256"
                       aria-hidden="true"
-                    ></i>
+                    >
+                      <path d="M222,128a6,6,0,0,1-6,6H134v82a6,6,0,0,1-12,0V134H40a6,6,0,0,1,0-12h82V40a6,6,0,0,1,12,0v82h82A6,6,0,0,1,222,128Z" />
+                    </svg>
                   </button>
                 </div>
 
@@ -482,10 +349,13 @@
           class="btn btn-ghost btn-sm inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-transparent bg-transparent px-2.5 py-[5px] text-[0.78rem] leading-[1.4] font-medium text-[#8b8fa8] transition duration-150 hover:bg-[#1c1f2e] hover:text-[#e4e6f0] active:scale-95"
           id="btnLogClear"
         >
-          <i
-            class="bi bi-trash3 text-[13px] leading-none"
+          <svg
+            class="ph-icon text-[13px]"
+            viewBox="0 0 256 256"
             aria-hidden="true"
-          ></i>
+          >
+            <path d="M216,50H174V40a22,22,0,0,0-22-22H104A22,22,0,0,0,82,40V50H40a6,6,0,0,0,0,12H50V208a14,14,0,0,0,14,14H192a14,14,0,0,0,14-14V62h10a6,6,0,0,0,0-12ZM94,40a10,10,0,0,1,10-10h48a10,10,0,0,1,10,10V50H94ZM194,208a2,2,0,0,1-2,2H64a2,2,0,0,1-2-2V62H194ZM110,104v64a6,6,0,0,1-12,0V104a6,6,0,0,1,12,0Zm48,0v64a6,6,0,0,1-12,0V104a6,6,0,0,1,12,0Z" />
+          </svg>
           Clear
         </button>
       </div>
@@ -495,15 +365,18 @@
           class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]"
           id="logEmpty"
         >
-          <i
-            class="bi bi-inbox mb-3 block text-[40px] leading-none opacity-30"
+          <svg
+            class="ph-icon mb-3 text-[40px] opacity-30"
+            viewBox="0 0 256 256"
             aria-hidden="true"
-          ></i>
+          >
+            <path d="M208,34H48A14,14,0,0,0,34,48V208a14,14,0,0,0,14,14H208a14,14,0,0,0,14-14V48A14,14,0,0,0,208,34ZM48,46H208a2,2,0,0,1,2,2V154H179.31a13.94,13.94,0,0,0-9.9,4.1L150.1,177.41a2,2,0,0,1-1.41.59H107.31a2,2,0,0,1-1.41-.58L86.59,158.1a13.94,13.94,0,0,0-9.9-4.1H46V48A2,2,0,0,1,48,46ZM208,210H48a2,2,0,0,1-2-2V166H76.69a2,2,0,0,1,1.41.58L97.41,185.9a13.94,13.94,0,0,0,9.9,4.1h41.38a13.94,13.94,0,0,0,9.9-4.1l19.31-19.31a2,2,0,0,1,1.41-.59H210v42A2,2,0,0,1,208,210Z" />
+          </svg>
           <div>No requests sent yet</div>
         </div>
       </div>
 
-      <div style="height: 60px"></div>
+      <div class="h-[60px]"></div>
     </div>
 
     <!-- Connection Settings Modal -->
@@ -525,10 +398,13 @@
             class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
             data-dismiss="modal"
           >
-            <i
-              class="bi bi-x-lg text-[16px] leading-none"
+            <svg
+              class="ph-icon text-[16px]"
+              viewBox="0 0 256 256"
               aria-hidden="true"
-            ></i>
+            >
+              <path d="M204.24,195.76a6,6,0,1,1-8.48,8.48L128,136.49,60.24,204.24a6,6,0,0,1-8.48-8.48L119.51,128,51.76,60.24a6,6,0,0,1,8.48-8.48L128,119.51l67.76-67.75a6,6,0,0,1,8.48,8.48L136.49,128Z" />
+            </svg>
           </button>
         </div>
         <div class="modal-body p-[22px]">
@@ -590,10 +466,13 @@
             class="btn btn-primary inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#5b6aff] bg-[#5b6aff] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-white transition duration-150 hover:border-[#4a58e0] hover:bg-[#4a58e0] active:scale-95"
             id="btnConnect"
           >
-            <i
-              class="bi bi-plug text-[13px] leading-none"
+            <svg
+              class="ph-icon text-[13px]"
+              viewBox="0 0 256 256"
               aria-hidden="true"
-            ></i>
+            >
+              <path d="M236.24,67.76a6,6,0,0,0-8.48,0L192,103.51,152.49,64l35.75-35.76a6,6,0,0,0-8.48-8.48L144,55.51,116.24,27.76a6,6,0,1,0-8.48,8.48L115.51,44,61.13,98.38a38,38,0,0,0,0,53.75l17.13,17.12-50.5,50.51a6,6,0,1,0,8.48,8.48l50.51-50.5,17.13,17.13a38,38,0,0,0,53.74,0L212,140.49l7.76,7.75a6,6,0,0,0,8.48-8.48L200.49,112l35.75-35.76A6,6,0,0,0,236.24,67.76ZM149.13,186.38a26,26,0,0,1-36.77,0L69.62,143.64a26,26,0,0,1,0-36.77L124,52.49,203.51,132Z" />
+            </svg>
             Connect
           </button>
         </div>
@@ -617,10 +496,13 @@
             class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
             data-dismiss="modal"
           >
-            <i
-              class="bi bi-x-lg text-[16px] leading-none"
+            <svg
+              class="ph-icon text-[16px]"
+              viewBox="0 0 256 256"
               aria-hidden="true"
-            ></i>
+            >
+              <path d="M204.24,195.76a6,6,0,1,1-8.48,8.48L128,136.49,60.24,204.24a6,6,0,0,1-8.48-8.48L119.51,128,51.76,60.24a6,6,0,0,1,8.48-8.48L128,119.51l67.76-67.75a6,6,0,0,1,8.48,8.48L136.49,128Z" />
+            </svg>
           </button>
         </div>
         <div class="modal-body p-[22px]">
@@ -689,19 +571,53 @@
             class="btn btn-primary inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#5b6aff] bg-[#5b6aff] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-white transition duration-150 hover:border-[#4a58e0] hover:bg-[#4a58e0] active:scale-95"
             id="btnLogin"
           >
-            <i
-              class="bi bi-box-arrow-in-right text-[13px] leading-none"
+            <svg
+              class="ph-icon text-[13px]"
+              viewBox="0 0 256 256"
               aria-hidden="true"
-            ></i>
+            >
+              <path d="M140.24,132.24l-40,40a6,6,0,0,1-8.48-8.48L121.51,134H24a6,6,0,0,1,0-12h97.51L91.76,92.24a6,6,0,0,1,8.48-8.48l40,40A6,6,0,0,1,140.24,132.24ZM200,34H136a6,6,0,0,0,0,12h58V210H136a6,6,0,0,0,0,12h64a6,6,0,0,0,6-6V40A6,6,0,0,0,200,34Z" />
+            </svg>
             Login
           </button>
         </div>
       </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
+    <script
+      src="node_modules/jquery/dist/jquery.min.js"
+      data-deploy-src="jquery-3.7.1.min.js"
+      nonce="__CSP_NONCE__"
+    ></script>
+    <script nonce="__CSP_NONCE__">
       "use strict";
+
+      // Phosphor Icons, light weight. See THIRD_PARTY_NOTICES.md.
+      var phosphorLightPaths = Object.freeze({
+        "paper-plane-tilt":
+          "M225.88,30.12a13.83,13.83,0,0,0-13.7-3.58l-.11,0L20.14,84.77A14,14,0,0,0,18,110.85l85.56,41.64L145.12,238a13.87,13.87,0,0,0,12.61,8c.4,0,.81,0,1.21-.05a13.9,13.9,0,0,0,12.29-10.09l58.2-191.93,0-.11A13.83,13.83,0,0,0,225.88,30.12Zm-8,10.4L159.73,232.43l0,.11a2,2,0,0,1-3.76.26l-40.68-83.58,49-49a6,6,0,1,0-8.49-8.49l-49,49L23.15,100a2,2,0,0,1,.31-3.74l.11,0L215.48,38.08a1.94,1.94,0,0,1,1.92.52A2,2,0,0,1,217.92,40.52Z",
+        x: "M204.24,195.76a6,6,0,1,1-8.48,8.48L128,136.49,60.24,204.24a6,6,0,0,1-8.48-8.48L119.51,128,51.76,60.24a6,6,0,0,1,8.48-8.48L128,119.51l67.76-67.75a6,6,0,0,1,8.48,8.48L136.49,128Z",
+        "caret-down":
+          "M212.24,100.24l-80,80a6,6,0,0,1-8.48,0l-80-80a6,6,0,0,1,8.48-8.48L128,167.51l75.76-75.75a6,6,0,0,1,8.48,8.48Z",
+        copy: "M216,34H88a6,6,0,0,0-6,6V82H40a6,6,0,0,0-6,6V216a6,6,0,0,0,6,6H168a6,6,0,0,0,6-6V174h42a6,6,0,0,0,6-6V40A6,6,0,0,0,216,34ZM162,210H46V94H162Zm48-48H174V88a6,6,0,0,0-6-6H94V46H210Z",
+        check:
+          "M228.24,76.24l-128,128a6,6,0,0,1-8.48,0l-56-56a6,6,0,0,1,8.48-8.48L96,191.51,219.76,67.76a6,6,0,0,1,8.48,8.48Z",
+        tray: "M208,34H48A14,14,0,0,0,34,48V208a14,14,0,0,0,14,14H208a14,14,0,0,0,14-14V48A14,14,0,0,0,208,34ZM48,46H208a2,2,0,0,1,2,2V154H179.31a13.94,13.94,0,0,0-9.9,4.1L150.1,177.41a2,2,0,0,1-1.41.59H107.31a2,2,0,0,1-1.41-.58L86.59,158.1a13.94,13.94,0,0,0-9.9-4.1H46V48A2,2,0,0,1,48,46ZM208,210H48a2,2,0,0,1-2-2V166H76.69a2,2,0,0,1,1.41.58L97.41,185.9a13.94,13.94,0,0,0,9.9,4.1h41.38a13.94,13.94,0,0,0,9.9-4.1l19.31-19.31a2,2,0,0,1,1.41-.59H210v42A2,2,0,0,1,208,210Z",
+      });
+
+      function phosphorIcon(name, className) {
+        return (
+          '<svg class="ph-icon ' +
+          (className || "") +
+          '" viewBox="0 0 256 256" aria-hidden="true"><path d="' +
+          phosphorLightPaths[name] +
+          '"></path></svg>'
+        );
+      }
+
+      function setPhosphorIcon(icon, name) {
+        icon.find("path").attr("d", phosphorLightPaths[name]);
+      }
 
       // ═══════════════════════════════════════════════
       // State
@@ -744,7 +660,7 @@
       }
 
       // ═══════════════════════════════════════════════
-      // Custom modal show/hide (replaces Bootstrap modals)
+      // Custom modal show/hide
       // ═══════════════════════════════════════════════
       function showModal(id) {
         var el = document.getElementById(id);
@@ -861,7 +777,7 @@
           $("#iconSend").html('<span class="spinner"></span>');
         } else {
           $("#iconSend").html(
-            '<i class="bi bi-send-fill text-[14px] leading-none" aria-hidden="true"></i>',
+            phosphorIcon("paper-plane-tilt", "text-[14px]"),
           );
         }
       };
@@ -896,19 +812,19 @@
         return json.replace(
           /("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
           function (match) {
-            var cls = "color:#a78bfa"; // number
+            var cls = "json-number";
             if (/^"/.test(match)) {
               if (/:$/.test(match)) {
-                cls = "color:#60a5fa"; // key
+                cls = "json-key";
               } else {
-                cls = "color:#34d399"; // string
+                cls = "json-string";
               }
             } else if (/true|false/.test(match)) {
-              cls = "color:#fbbf24"; // boolean
+              cls = "json-boolean";
             } else if (/null/.test(match)) {
-              cls = "color:#f87171"; // null
+              cls = "json-null";
             }
-            return '<span style="' + cls + '">' + match + "</span>";
+            return '<span class="' + cls + '">' + match + "</span>";
           },
         );
       }
@@ -1003,7 +919,7 @@
         if (locationHeader) {
           if (locationHeader.includes("/PRO/Datei/")) {
             locationHtml =
-              '<div class="log-location border-b border-[#2a2d3e] px-4 py-2.5 text-[0.8rem]"><span style="color:#8b8fa8">Location:</span> <a class="text-[#5b6aff] no-underline hover:underline" href="' +
+              '<div class="log-location border-b border-[#2a2d3e] px-4 py-2.5 text-[0.8rem]"><span class="text-[#8b8fa8]">Location:</span> <a class="text-[#5b6aff] no-underline hover:underline" href="' +
               locationHeader +
               "?pxSessionId=" +
               pxSessionId +
@@ -1012,7 +928,7 @@
               "</a></div>";
           } else {
             locationHtml =
-              '<div class="log-location border-b border-[#2a2d3e] px-4 py-2.5 text-[0.8rem]"><span style="color:#8b8fa8">Location:</span> ' +
+              '<div class="log-location border-b border-[#2a2d3e] px-4 py-2.5 text-[0.8rem]"><span class="text-[#8b8fa8]">Location:</span> ' +
               escapeHtml(locationHeader) +
               "</div>";
           }
@@ -1021,10 +937,10 @@
         var id = "log-" + logcounter;
         var highlightedResponse = response
           ? renderWithLineNumbers(syntaxHighlight(response))
-          : '<span style="color:#8b8fa8">— leer —</span>';
+          : '<span class="text-[#8b8fa8]">— leer —</span>';
         var highlightedRequest = request
           ? renderWithLineNumbers(syntaxHighlight(request))
-          : '<span style="color:#8b8fa8">— leer —</span>';
+          : '<span class="text-[#8b8fa8]">— leer —</span>';
         var arrayCountBadge =
           typeof responseArrayCount === "number"
             ? '<span class="log-tab-count ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-[#4f5f86]/35 bg-[#1b2438] px-1.5 align-middle font-mono text-[0.68rem] leading-none font-medium text-[#8090b8]" title="Top-level array length: ' +
@@ -1070,8 +986,13 @@
             '<span class="log-time text-[0.72rem] text-[#5a5e78]">' +
             timeStr +
             "</span>" +
-            '<button type="button" class="log-delete-btn inline-flex h-5 w-5 items-center justify-center rounded bg-transparent text-[#5a5e78] transition hover:bg-rose-400/12 hover:text-rose-400" title="Delete entry" aria-label="Delete entry"><i class="bi bi-x-lg text-[11px] leading-none" aria-hidden="true"></i></button>' +
-            '<i class="log-chevron bi bi-chevron-down shrink-0 text-[#5a5e78] text-[12px] leading-none" aria-hidden="true"></i>' +
+            '<button type="button" class="log-delete-btn inline-flex h-5 w-5 items-center justify-center rounded bg-transparent text-[#5a5e78] transition hover:bg-rose-400/12 hover:text-rose-400" title="Delete entry" aria-label="Delete entry">' +
+            phosphorIcon("x", "text-[11px]") +
+            "</button>" +
+            phosphorIcon(
+              "caret-down",
+              "log-chevron shrink-0 text-[12px] text-[#5a5e78]",
+            ) +
             "</div>" +
             "</div>" +
             '<div class="log-body border-t border-[#2a2d3e]">' +
@@ -1092,7 +1013,9 @@
             '<div class="log-code-wrap relative">' +
             '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-transparent bg-transparent p-0 text-[0.78rem] text-[#8b8fa8] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]" data-copy="response" data-id="' +
             id +
-            '" title="Copy response" aria-label="Copy response"><i class="bi bi-clipboard text-[12px] leading-none" aria-hidden="true"></i></button>' +
+            '" title="Copy response" aria-label="Copy response">' +
+            phosphorIcon("copy", "text-[12px]") +
+            "</button>" +
             '<div class="log-code max-h-[400px] overflow-x-auto overflow-y-auto break-words whitespace-pre-wrap px-4 py-3.5 font-mono text-[0.8rem] leading-[1.7] text-[#8b8fa8]">' +
             highlightedResponse +
             "</div>" +
@@ -1104,7 +1027,9 @@
             '<div class="log-code-wrap relative">' +
             '<button type="button" class="copy-btn absolute right-2 top-2 z-[5] inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-transparent bg-transparent p-0 text-[0.78rem] text-[#8b8fa8] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]" data-copy="request" data-id="' +
             id +
-            '" title="Copy request" aria-label="Copy request"><i class="bi bi-clipboard text-[12px] leading-none" aria-hidden="true"></i></button>' +
+            '" title="Copy request" aria-label="Copy request">' +
+            phosphorIcon("copy", "text-[12px]") +
+            "</button>" +
             '<div class="log-code max-h-[400px] overflow-x-auto overflow-y-auto break-words whitespace-pre-wrap px-4 py-3.5 font-mono text-[0.8rem] leading-[1.7] text-[#8b8fa8]">' +
             highlightedRequest +
             "</div>" +
@@ -1264,7 +1189,9 @@
               '<input type="text" class="endpoint-param-value ' +
               getEndpointDetailInputClasses() +
               '" placeholder="value" autocomplete="off" spellcheck="false" />' +
-              '<button type="button" class="endpoint-param-delete inline-flex h-[38px] w-[38px] items-center justify-center self-center rounded-md border border-[#2a2d3e] bg-[#161822] text-[#8b8fa8] transition hover:border-[rgba(248,113,113,0.2)] hover:bg-[rgba(248,113,113,0.08)] hover:text-[#f87171]" title="Remove param" aria-label="Remove param"><i class="bi bi-x-lg text-[11px] leading-none" aria-hidden="true"></i></button>' +
+              '<button type="button" class="endpoint-param-delete inline-flex h-[38px] w-[38px] items-center justify-center self-center rounded-md border border-[#2a2d3e] bg-[#161822] text-[#8b8fa8] transition hover:border-[rgba(248,113,113,0.2)] hover:bg-[rgba(248,113,113,0.08)] hover:text-[#f87171]" title="Remove param" aria-label="Remove param">' +
+              phosphorIcon("x", "text-[11px]") +
+              "</button>" +
               "</div>",
           );
 
@@ -1628,7 +1555,9 @@
         $("#btnLogClear").click(function () {
           $("#output").empty();
           $("#output").append(
-            '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><i class="bi bi-inbox mb-3 block text-[40px] leading-none opacity-30" aria-hidden="true"></i><div>No requests sent yet</div></div>',
+            '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty">' +
+              phosphorIcon("tray", "mb-3 text-[40px] opacity-30") +
+              "<div>No requests sent yet</div></div>",
           );
           logcounter = 0;
           updateLogCount();
@@ -1702,7 +1631,9 @@
               empty.removeClass("hidden");
             } else {
               $("#output").append(
-                '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty"><i class="bi bi-inbox mb-3 block text-[40px] leading-none opacity-30" aria-hidden="true"></i><div>No requests sent yet</div></div>',
+                '<div class="log-empty px-5 py-12 text-center text-[0.9rem] text-[#5a5e78]" id="logEmpty">' +
+                  phosphorIcon("tray", "mb-3 text-[40px] opacity-30") +
+                  "<div>No requests sent yet</div></div>",
               );
             }
           }
@@ -1728,14 +1659,11 @@
           var text = entry.data(type) || "";
 
           navigator.clipboard.writeText(text).then(function () {
-            var icon = btn.find("i");
-            icon
-              .removeClass("bi-clipboard")
-              .addClass("bi-check2")
-              .attr("aria-hidden", "true");
+            var icon = btn.find(".ph-icon");
+            setPhosphorIcon(icon, "check");
             btn.addClass("copied");
             setTimeout(function () {
-              icon.removeClass("bi-check2").addClass("bi-clipboard");
+              setPhosphorIcon(icon, "copy");
               btn.removeClass("copied");
             }, 1500);
           });

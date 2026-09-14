@@ -1,0 +1,172 @@
+@import "tailwindcss";
+@source "./index.html";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Cascadia Code", "Fira Code", "Consolas", ui-monospace, monospace;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.ph-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  fill: currentColor;
+  vertical-align: -0.125em;
+}
+
+.dot.pulse {
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: block;
+  box-sizing: border-box;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.method-dropdown,
+.body-editor,
+.modal-overlay,
+.log-body,
+.log-tab-content {
+  display: none;
+}
+
+.method-dropdown.show,
+.body-editor.show,
+.modal-overlay.show,
+.log-tab-content.active {
+  display: block;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.log-entry.expanded .log-body {
+  display: block;
+}
+
+.method-btn .method-chevron,
+.log-chevron {
+  transition: transform 150ms ease;
+}
+
+.method-btn.open .method-chevron,
+.log-entry.expanded .log-chevron {
+  transform: rotate(180deg);
+}
+
+.log-tab.active {
+  border-bottom-color: #5b6aff;
+  color: #5b6aff;
+}
+
+.copy-btn.copied {
+  color: #34d399;
+}
+
+.log-code {
+  font-family: "Berkeley Mono", "Cascadia Code", "Fira Code", "Consolas",
+    ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+}
+
+.log-json-lines {
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.log-json-line {
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr);
+  column-gap: 14px;
+}
+
+.log-json-lno {
+  user-select: none;
+  text-align: right;
+  color: rgba(139, 143, 168, 0.45);
+  font-size: 0.76rem;
+}
+
+.log-json-code {
+  min-width: 0;
+  color: #9aa0bc;
+}
+
+.json-number {
+  color: #a78bfa;
+}
+
+.json-key {
+  color: #60a5fa;
+}
+
+.json-string {
+  color: #34d399;
+}
+
+.json-boolean {
+  color: #fbbf24;
+}
+
+.json-null {
+  color: #f87171;
+}
+
+.form-group.has-success .form-input,
+.form-group.has-success .form-select {
+  border-color: #34d399;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2d3e;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5a5e78;
+}
