@@ -380,23 +380,27 @@
     </div>
 
     <!-- Connection Settings Modal -->
-    <div
-      class="modal-overlay fixed inset-0 z-[1000] items-center justify-center bg-black/60 p-5 [backdrop-filter:blur(4px)]"
+    <dialog
+      class="modal-dialog m-auto w-[calc(100%-2.5rem)] max-w-[480px] overflow-hidden rounded-[14px] border border-[#2a2d3e] bg-[#161822] p-0 text-[#e4e6f0] shadow-2xl [animation:modal-in_200ms_ease]"
       id="modalConnectionSettings"
+      aria-labelledby="modalConnectionSettingsTitle"
+      closedby="any"
     >
-      <div
-        class="modal w-full max-w-[480px] rounded-[14px] border border-[#2a2d3e] bg-[#161822] shadow-2xl [animation:modal-in_200ms_ease]"
-      >
         <div
           class="modal-header flex items-center justify-between border-b border-[#2a2d3e] px-[22px] py-[18px]"
         >
-          <h3 class="modal-title text-base font-semibold">
+          <h3
+            class="modal-title text-base font-semibold"
+            id="modalConnectionSettingsTitle"
+          >
             Connection settings
           </h3>
           <button
             type="button"
             class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
-            data-dismiss="modal"
+            commandfor="modalConnectionSettings"
+            command="close"
+            aria-label="Close connection settings"
           >
             <svg
               class="ph-icon text-[16px]"
@@ -419,6 +423,7 @@
               class="form-input w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition placeholder:text-[#5a5e78] focus:border-[#5b6aff]"
               id="txtConnSettRestApiUrl"
               placeholder="https://remote.proffix.net:11011/pxapi/v4"
+              autofocus
             />
             <div class="form-hint mt-1 text-[0.75rem] text-[#5a5e78]">
               e.g. https://remote.proffix.net:11011/pxapi/v4
@@ -457,7 +462,8 @@
           <button
             type="button"
             class="btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#2a2d3e] bg-[#161822] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-[#e4e6f0] transition duration-150 hover:border-[#5a5e78] hover:bg-[#1c1f2e] active:scale-95"
-            data-dismiss="modal"
+            commandfor="modalConnectionSettings"
+            command="close"
           >
             Cancel
           </button>
@@ -476,25 +482,30 @@
             Connect
           </button>
         </div>
-      </div>
-    </div>
+    </dialog>
 
     <!-- Login Modal -->
-    <div
-      class="modal-overlay fixed inset-0 z-[1000] items-center justify-center bg-black/60 p-5 [backdrop-filter:blur(4px)]"
+    <dialog
+      class="modal-dialog m-auto w-[calc(100%-2.5rem)] max-w-[480px] overflow-hidden rounded-[14px] border border-[#2a2d3e] bg-[#161822] p-0 text-[#e4e6f0] shadow-2xl [animation:modal-in_200ms_ease]"
       id="modalLogin"
+      aria-labelledby="modalLoginTitle"
+      closedby="any"
     >
-      <div
-        class="modal w-full max-w-[480px] rounded-[14px] border border-[#2a2d3e] bg-[#161822] shadow-2xl [animation:modal-in_200ms_ease]"
-      >
         <div
           class="modal-header flex items-center justify-between border-b border-[#2a2d3e] px-[22px] py-[18px]"
         >
-          <h3 class="modal-title text-base font-semibold">Login</h3>
+          <h3
+            class="modal-title text-base font-semibold"
+            id="modalLoginTitle"
+          >
+            Login
+          </h3>
           <button
             type="button"
             class="modal-close flex cursor-pointer rounded-md bg-transparent p-1 text-[#5a5e78] transition hover:bg-[#1c1f2e] hover:text-[#e4e6f0]"
-            data-dismiss="modal"
+            commandfor="modalLogin"
+            command="close"
+            aria-label="Close login"
           >
             <svg
               class="ph-icon text-[16px]"
@@ -515,6 +526,7 @@
             <select
               class="form-select w-full rounded-md border border-[#2a2d3e] bg-[#1a1d2e] px-3 py-[9px] text-[0.85rem] text-[#e4e6f0] outline-none transition focus:border-[#5b6aff]"
               id="selDatabase"
+              autofocus
             ></select>
           </div>
           <div class="form-group mb-4 last:mb-0">
@@ -562,7 +574,8 @@
           <button
             type="button"
             class="btn inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-[#2a2d3e] bg-[#161822] px-4 py-2 text-[0.85rem] leading-[1.4] font-medium text-[#e4e6f0] transition duration-150 hover:border-[#5a5e78] hover:bg-[#1c1f2e] active:scale-95"
-            data-dismiss="modal"
+            commandfor="modalLogin"
+            command="close"
           >
             Cancel
           </button>
@@ -581,8 +594,7 @@
             Login
           </button>
         </div>
-      </div>
-    </div>
+    </dialog>
 
     <script
       src="node_modules/jquery/dist/jquery.min.js"
@@ -660,31 +672,11 @@
       }
 
       // ═══════════════════════════════════════════════
-      // Custom modal show/hide
+      // Native dialogs
       // ═══════════════════════════════════════════════
-      function showModal(id) {
-        var el = document.getElementById(id);
-        if (el) {
-          el.classList.add("show");
-        }
+      function openDialog(id) {
+        document.getElementById(id).showModal();
       }
-      function hideModal(id) {
-        var el = document.getElementById(id);
-        if (el) {
-          el.classList.remove("show");
-        }
-      }
-      // Close on overlay click or dismiss buttons
-      $(document).on("click", ".modal-overlay", function (e) {
-        if (e.target === this) $(this).removeClass("show");
-      });
-      $(document).on("click", "[data-dismiss='modal']", function () {
-        $(this).closest(".modal-overlay").removeClass("show");
-      });
-      // Esc to close
-      $(document).on("keydown", function (e) {
-        if (e.key === "Escape") $(".modal-overlay.show").removeClass("show");
-      });
 
       // ═══════════════════════════════════════════════
       // API Call
@@ -1436,14 +1428,14 @@
         $(
           "#lblConnectionNot, #lblConnectionInProgress, #lblConnectionOk, #lblConnectionFailed",
         ).click(function () {
-          showModal("modalConnectionSettings");
+          openDialog("modalConnectionSettings");
         });
 
         // Login via status pills
         $(
           "#lblLoginNot, #lblLoginInProgress, #lblLoginOk, #lblLoginFailed",
         ).click(function () {
-          showModal("modalLogin");
+          openDialog("modalLogin");
         });
 
         // Connect
@@ -1466,7 +1458,7 @@
                 pwd: passwordHash,
               };
               doConnect();
-              hideModal("modalConnectionSettings");
+              document.getElementById("modalConnectionSettings").close();
             } else {
               alert("Please enter a password or password hash.");
             }
@@ -1499,7 +1491,7 @@
                 Datenbank: { Name: $("#selDatabase").val() },
               };
               doLogin();
-              hideModal("modalLogin");
+              document.getElementById("modalLogin").close();
             } else {
               alert("Please enter a password or password hash.");
             }

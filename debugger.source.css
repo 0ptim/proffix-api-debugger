@@ -59,7 +59,6 @@
 
 .method-dropdown,
 .body-editor,
-.modal-overlay,
 .log-body,
 .log-tab-content {
   display: none;
@@ -67,13 +66,13 @@
 
 .method-dropdown.show,
 .body-editor.show,
-.modal-overlay.show,
 .log-tab-content.active {
   display: block;
 }
 
-.modal-overlay.show {
-  display: flex;
+.modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
 }
 
 .log-entry.expanded .log-body {
