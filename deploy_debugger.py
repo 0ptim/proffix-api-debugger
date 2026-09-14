@@ -14,7 +14,7 @@ import os
 import re
 import shutil
 import sys
-import tempfile
+import uuid
 from pathlib import Path
 from typing import Iterable, List
 
@@ -177,11 +177,11 @@ def deploy(source_file: Path, version_dirs: Iterable[Path], dry_run: bool) -> in
                     1,
                 )
 
-            with tempfile.TemporaryDirectory(
-                prefix=".debugger-deploy-",
-                dir=destination.parent,
-            ) as staging_dir_name:
-                staging_dir = Path(staging_dir_name)
+            staging_dir = (
+                destination.parent / f".debugger-deploy-{uuid.uuid4().hex}"
+            )
+            staging_dir.mkdir()
+            try:
                 for source, destination_name in assets:
                     shutil.copy2(source, staging_dir / destination_name)
 
@@ -193,6 +193,9 @@ def deploy(source_file: Path, version_dirs: Iterable[Path], dry_run: bool) -> in
                         destination.parent / destination_name
                     )
                 staged_html.replace(destination)
+            finally:
+                if staging_dir.exists():
+                    shutil.rmtree(staging_dir)
 
             if obsolete_vendor_dir.is_dir():
                 shutil.rmtree(obsolete_vendor_dir)
